@@ -1,0 +1,1332 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URBAN EDGES - Streetwear & Sneakers</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --bg-elevated: #141414;
+      --fg: #f5f5f5;
+      --muted: #737373;
+      --accent: #c8ff00;
+      --accent-dim: #9fcc00;
+      --card: #1a1a1a;
+      --border: #2a2a2a;
+      --danger: #ff4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    .font-display { font-family: 'Bebas Neue', sans-serif; }
+
+    .noise-bg::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .gradient-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.12;
+      pointer-events: none;
+    }
+
+    /* Fanned images */
+    .fanned-container {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fanned-image {
+      position: absolute;
+      width: 200px;
+      height: 260px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8);
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      transform-origin: center center;
+    }
+
+    .fanned-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+      .fanned-container { height: 320px; }
+      .fanned-image { width: 160px; height: 210px; }
+    }
+
+    /* Page transitions */
+    .page { 
+      display: none; 
+      animation: fadeIn 0.3s ease;
+    }
+    .page.active { display: block; }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Product card with green border hover effect */
+    .product-card { 
+      transition: all 0.3s ease; 
+    }
+    .product-card:hover { 
+      transform: translateY(-5px); 
+    }
+    .product-card .product-image-wrapper {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    .product-card:hover .product-image-wrapper {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(200, 255, 0, 0.3);
+    }
+    .product-card .product-image { 
+      transition: transform 0.4s ease; 
+    }
+    .product-card:hover .product-image { 
+      transform: scale(1.05); 
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .btn-primary:hover { background: var(--accent-dim); }
+
+    .btn-outline {
+      border: 2px solid var(--border);
+      color: var(--fg);
+      transition: all 0.2s ease;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Selectors */
+    .size-btn { transition: all 0.2s ease; }
+    .size-btn.selected { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+    .color-swatch { transition: all 0.2s ease; }
+    .color-swatch.selected { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--accent); }
+
+    .thumbnail { transition: all 0.2s ease; border: 2px solid transparent; }
+    .thumbnail.selected { border-color: var(--accent); }
+
+    /* Scrollbar */
+    .custom-scroll::-webkit-scrollbar { height: 4px; width: 4px; }
+    .custom-scroll::-webkit-scrollbar-track { background: var(--border); }
+    .custom-scroll::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 2px; }
+
+    input:focus, select:focus { outline: none; border-color: var(--accent); }
+
+    .stagger-item { opacity: 0; animation: fadeInUp 0.6s ease forwards; }
+    @keyframes fadeInUp { 
+      from { opacity: 0; transform: translateY(20px); } 
+      to { opacity: 1; transform: translateY(0); } 
+    }
+
+    .review-card { transition: all 0.3s ease; }
+    .review-card:hover { transform: translateY(-5px); background: var(--bg-elevated); }
+
+    /* Collection card styles */
+    .collection-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
+    .collection-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(200, 255, 0, 0.15);
+    }
+    .collection-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 2px solid transparent;
+      border-radius: 16px;
+      transition: all 0.3s ease;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .collection-card:hover::before {
+      border-color: var(--accent);
+    }
+    .collection-card img {
+      transition: transform 0.6s ease;
+    }
+    .collection-card:hover img {
+      transform: scale(1.1);
+    }
+
+    /* Modal fixes */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+    }
+    .modal-overlay.active { display: block; }
+  </style>
+</head>
+<body class="noise-bg">
+
+  <!-- Navigation Header -->
+  <header id="main-header" class="fixed top-0 left-0 right-0 z-40 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-20">
+        <a href="#" onclick="navigateTo('home'); return false;" class="font-display text-2xl sm:text-3xl tracking-wider text-white hover:text-[var(--accent)] transition-colors">URBAN EDGES</a>
+
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="#" onclick="navigateTo('home'); return false;" class="text-sm font-medium text-[var(--muted)] hover:text-white transition-colors">Home</a>
+          <a href="#" onclick="navigateTo('plp'); return false;" class="text-sm font-medium text-[var(--muted)] hover:text-white transition-colors">Shop All</a>
+          <a href="#" onclick="navigateTo('collections'); return false;" class="text-sm font-medium text-[var(--muted)] hover:text-white transition-colors">Collections</a>
+        </nav>
+
+        <div class="flex items-center gap-3">
+          <button onclick="openSearch()" class="p-2 hover:text-[var(--accent)] transition-colors" aria-label="Search">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </button>
+          <button onclick="openAccountModal()" class="p-2 hover:text-[var(--accent)] transition-colors" aria-label="Account">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          </button>
+          <button onclick="openCart()" class="p-2 hover:text-[var(--accent)] transition-colors relative" aria-label="Cart">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            <span id="cart-count" class="absolute -top-1 -right-1 w-5 h-5 bg-[var(--accent)] text-black text-xs font-bold rounded-full flex items-center justify-center hidden">0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== HOME PAGE ========== -->
+  <div id="page-home" class="page active">
+    <!-- Hero Section -->
+    <section class="min-h-screen relative overflow-hidden flex items-center pt-20">
+      <div class="gradient-blob w-[600px] h-[600px] bg-[var(--accent)] top-[-200px] right-[-100px]"></div>
+      <div class="gradient-blob w-[400px] h-[400px] bg-[#ff6b00] bottom-[-100px] left-[-100px]"></div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          
+          <!-- LEFT: Content -->
+          <div class="space-y-6 z-10 text-center lg:text-left order-2 lg:order-1">
+            <div class="space-y-4">
+              <p class="text-[var(--accent)] font-medium tracking-widest text-sm stagger-item" style="animation-delay: 0.1s">NEW COLLECTION 2024</p>
+              <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl leading-none tracking-tight stagger-item" style="animation-delay: 0.2s">URBAN<br>EDGES</h1>
+              <p class="text-[var(--muted)] text-base lg:text-lg max-w-md mx-auto lg:mx-0 stagger-item" style="animation-delay: 0.3s">Streetwear meets premium craftsmanship. Limited drops, timeless style. Built for those who move differently.</p>
+            </div>
+
+            <div class="flex flex-wrap gap-4 justify-center lg:justify-start stagger-item" style="animation-delay: 0.4s">
+              <button onclick="navigateTo('plp')" class="btn-primary px-6 py-3 rounded-full text-sm tracking-wide font-semibold">SHOP NOW</button>
+              <button onclick="document.getElementById('categories-section').scrollIntoView({behavior:'smooth'})" class="btn-outline px-6 py-3 rounded-full text-sm tracking-wide">EXPLORE</button>
+            </div>
+
+            <div class="flex gap-6 lg:gap-8 pt-4 justify-center lg:justify-start stagger-item" style="animation-delay: 0.5s">
+              <div><p class="font-display text-2xl lg:text-3xl text-white">120+</p><p class="text-[var(--muted)] text-xs lg:text-sm">Products</p></div>
+              <div><p class="font-display text-2xl lg:text-3xl text-white">50K+</p><p class="text-[var(--muted)] text-xs lg:text-sm">Customers</p></div>
+              <div><p class="font-display text-2xl lg:text-3xl text-white">4.9</p><p class="text-[var(--muted)] text-xs lg:text-sm">Rating</p></div>
+            </div>
+          </div>
+
+          <!-- RIGHT: Fanned Images -->
+          <div class="relative flex items-center justify-center order-1 lg:order-2">
+             <div class="fanned-container" id="fanned-stack"></div>
+             <div class="absolute bottom-0 lg:bottom-4 right-1/2 translate-x-1/2 lg:translate-x-0 lg:right-4 flex gap-2 z-40">
+               <button onclick="cycleFanned(-1)" class="w-10 h-10 rounded-full border border-[var(--border)] bg-[var(--bg)]/80 backdrop-blur flex items-center justify-center hover:border-[var(--accent)] transition-colors">
+                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+               </button>
+               <button onclick="cycleFanned(1)" class="w-10 h-10 rounded-full border border-[var(--border)] bg-[var(--bg)]/80 backdrop-blur flex items-center justify-center hover:border-[var(--accent)] transition-colors">
+                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+               </button>
+             </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories-section" class="py-16 lg:py-24 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between mb-8 lg:mb-12 reveal">
+          <div>
+            <p class="text-[var(--accent)] text-sm font-medium tracking-widest mb-2">BROWSE BY</p>
+            <h2 class="font-display text-3xl lg:text-4xl">CATEGORIES</h2>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-4 lg:gap-6">
+          <div onclick="filterByCategory('sneakers')" class="reveal group cursor-pointer relative overflow-hidden rounded-2xl aspect-[4/5] bg-[var(--card)]" style="transition-delay: 0.1s">
+            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=500&fit=crop" alt="Sneakers" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-6 left-6"><p class="font-display text-2xl lg:text-3xl">SNEAKERS</p><p class="text-[var(--muted)] text-sm">48 Products</p></div>
+          </div>
+
+          <div onclick="filterByCategory('apparel')" class="reveal group cursor-pointer relative overflow-hidden rounded-2xl aspect-[4/5] bg-[var(--card)]" style="transition-delay: 0.2s">
+            <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=500&fit=crop" alt="Apparel" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-6 left-6"><p class="font-display text-2xl lg:text-3xl">APPAREL</p><p class="text-[var(--muted)] text-sm">36 Products</p></div>
+          </div>
+
+          <div onclick="filterByCategory('accessories')" class="reveal group cursor-pointer relative overflow-hidden rounded-2xl aspect-[4/5] bg-[var(--card)]" style="transition-delay: 0.3s">
+            <img src="https://images.unsplash.com/photo-1523779105320-d1cd346ff52b?w=400&h=500&fit=crop" alt="Accessories" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-6 left-6"><p class="font-display text-2xl lg:text-3xl">ACCESSORIES</p><p class="text-[var(--muted)] text-sm">24 Products</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- New Arrivals Section -->
+    <section class="py-16 lg:py-24 bg-[var(--bg-elevated)]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between mb-8 lg:mb-12 reveal">
+          <div>
+            <p class="text-[var(--accent)] text-sm font-medium tracking-widest mb-2">JUST DROPPED</p>
+            <h2 class="font-display text-3xl lg:text-4xl">NEW ARRIVALS</h2>
+          </div>
+        </div>
+        <div id="new-arrivals" class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6"></div>
+      </div>
+    </section>
+
+    <!-- Best Sellers Section -->
+    <section class="py-16 lg:py-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-8 lg:mb-12 reveal">
+          <p class="text-[var(--accent)] text-sm font-medium tracking-widest mb-2">TRENDING NOW</p>
+          <h2 class="font-display text-3xl lg:text-4xl">BEST SELLERS</h2>
+        </div>
+        <div id="best-sellers" class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6"></div>
+      </div>
+    </section>
+
+    <!-- Reviews & Newsletter -->
+    <section class="py-16 lg:py-24 bg-[var(--bg-elevated)]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-8 lg:mb-12 reveal">
+          <p class="text-[var(--accent)] text-sm font-medium tracking-widest mb-2">TESTIMONIALS</p>
+          <h2 class="font-display text-3xl lg:text-4xl">WHAT CUSTOMERS SAY</h2>
+        </div>
+        <div id="reviews-container" class="grid md:grid-cols-3 gap-4 lg:gap-6"></div>
+      </div>
+    </section>
+
+    <section class="py-16 lg:py-24 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-r from-[var(--accent)]/10 to-transparent"></div>
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative reveal">
+        <h2 class="font-display text-3xl lg:text-4xl mb-4">JOIN THE MOVEMENT</h2>
+        <p class="text-[var(--muted)] mb-8 max-w-md mx-auto text-sm lg:text-base">Subscribe to get exclusive access to new drops.</p>
+        <form onsubmit="handleSubscribe(event)" class="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+          <input type="email" id="subscribe-email" required placeholder="Enter your email" class="flex-1 bg-[var(--card)] border border-[var(--border)] rounded-full px-6 py-3 text-white placeholder-[var(--muted)] text-sm">
+          <button type="submit" class="btn-primary px-8 py-3 rounded-full text-sm tracking-wide font-semibold whitespace-nowrap">SUBSCRIBE</button>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <!-- ========== COLLECTIONS PAGE ========== -->
+  <div id="page-collections" class="page">
+    <div class="pt-24 pb-12 min-h-screen">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-8 lg:mb-12 reveal">
+          <h1 class="font-display text-3xl lg:text-4xl mb-2">COLLECTIONS</h1>
+          <p class="text-[var(--muted)]">Explore our curated drops and exclusive collaborations</p>
+        </div>
+
+        <!-- Featured Collections Grid -->
+        <div class="grid md:grid-cols-2 gap-6 lg:gap-8 mb-12">
+          <!-- Summer Drop Collection -->
+          <div onclick="filterByCollection('summer')" class="collection-card reveal aspect-[16/9] bg-[var(--card)]" style="transition-delay: 0.1s">
+            <img src="https://images.unsplash.com/photo-1556906781-9a412961c28c?w=800&h=450&fit=crop" alt="Summer Drop" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
+              <p class="text-[var(--accent)] text-xs font-medium tracking-widest mb-2">NEW DROP</p>
+              <h3 class="font-display text-2xl lg:text-3xl mb-2">SUMMER HEAT 2024</h3>
+              <p class="text-[var(--muted)] text-sm mb-4">Lightweight essentials for the streets</p>
+              <span class="text-white text-sm font-medium flex items-center gap-2">
+                Explore Collection 
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- Night Runner Collection -->
+          <div onclick="filterByCollection('night')" class="collection-card reveal aspect-[16/9] bg-[var(--card)]" style="transition-delay: 0.2s">
+            <img src="https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=800&h=450&fit=crop" alt="Night Runner" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
+              <p class="text-[var(--accent)] text-xs font-medium tracking-widest mb-2">LIMITED EDITION</p>
+              <h3 class="font-display text-2xl lg:text-3xl mb-2">NIGHT RUNNER</h3>
+              <p class="text-[var(--muted)] text-sm mb-4">Reflective gear for after-dark missions</p>
+              <span class="text-white text-sm font-medium flex items-center gap-2">
+                Explore Collection 
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- Urban Tech Collection -->
+          <div onclick="filterByCollection('tech')" class="collection-card reveal aspect-[16/9] bg-[var(--card)]" style="transition-delay: 0.3s">
+            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=450&fit=crop" alt="Urban Tech" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
+              <p class="text-[var(--accent)] text-xs font-medium tracking-widest mb-2">TECH WEAR</p>
+              <h3 class="font-display text-2xl lg:text-3xl mb-2">URBAN TECH</h3>
+              <p class="text-[var(--muted)] text-sm mb-4">Functional fashion for the modern urbanite</p>
+              <span class="text-white text-sm font-medium flex items-center gap-2">
+                Explore Collection 
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- Heritage Collection -->
+          <div onclick="filterByCollection('heritage')" class="collection-card reveal aspect-[16/9] bg-[var(--card)]" style="transition-delay: 0.4s">
+            <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&h=450&fit=crop" alt="Heritage" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
+              <p class="text-[var(--accent)] text-xs font-medium tracking-widest mb-2">CLASSICS</p>
+              <h3 class="font-display text-2xl lg:text-3xl mb-2">HERITAGE LINE</h3>
+              <p class="text-[var(--muted)] text-sm mb-4">Timeless pieces that never go out of style</p>
+              <span class="text-white text-sm font-medium flex items-center gap-2">
+                Explore Collection 
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Collection Categories -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+          <div onclick="filterByCategory('sneakers')" class="reveal bg-[var(--card)] rounded-xl p-6 text-center cursor-pointer hover:bg-[var(--bg-elevated)] transition-colors" style="transition-delay: 0.1s">
+            <div class="w-12 h-12 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+              <svg class="w-6 h-6 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <h4 class="font-display text-lg">SNEAKERS</h4>
+            <p class="text-[var(--muted)] text-xs mt-1">48 Products</p>
+          </div>
+          <div onclick="filterByCategory('apparel')" class="reveal bg-[var(--card)] rounded-xl p-6 text-center cursor-pointer hover:bg-[var(--bg-elevated)] transition-colors" style="transition-delay: 0.2s">
+            <div class="w-12 h-12 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+              <svg class="w-6 h-6 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+            </div>
+            <h4 class="font-display text-lg">APPAREL</h4>
+            <p class="text-[var(--muted)] text-xs mt-1">36 Products</p>
+          </div>
+          <div onclick="filterByCategory('accessories')" class="reveal bg-[var(--card)] rounded-xl p-6 text-center cursor-pointer hover:bg-[var(--bg-elevated)] transition-colors" style="transition-delay: 0.3s">
+            <div class="w-12 h-12 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+              <svg class="w-6 h-6 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h4 class="font-display text-lg">ACCESSORIES</h4>
+            <p class="text-[var(--muted)] text-xs mt-1">24 Products</p>
+          </div>
+          <div onclick="navigateTo('plp')" class="reveal bg-[var(--card)] rounded-xl p-6 text-center cursor-pointer hover:bg-[var(--bg-elevated)] transition-colors" style="transition-delay: 0.4s">
+            <div class="w-12 h-12 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+              <svg class="w-6 h-6 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            </div>
+            <h4 class="font-display text-lg">VIEW ALL</h4>
+            <p class="text-[var(--muted)] text-xs mt-1">120+ Products</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PLP PAGE ========== -->
+  <div id="page-plp" class="page">
+    <div class="pt-24 pb-12 min-h-screen">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-8 reveal">
+          <h1 class="font-display text-3xl lg:text-4xl mb-2">SHOP ALL</h1>
+          <p class="text-[var(--muted)]"><span id="product-count">0</span> products</p>
+        </div>
+        <div class="flex flex-col lg:flex-row gap-8">
+          <aside class="lg:w-64 flex-shrink-0">
+            <div class="sticky top-24 space-y-8">
+              <div class="reveal">
+                <h3 class="font-semibold mb-4 text-sm tracking-wider">CATEGORY</h3>
+                <div class="space-y-2">
+                  <label class="flex items-center gap-3 cursor-pointer group">
+                    <input type="checkbox" value="sneakers" onchange="applyFilters()" class="w-4 h-4 accent-[var(--accent)]">
+                    <span class="text-[var(--muted)] group-hover:text-white transition-colors text-sm">Sneakers</span>
+                  </label>
+                  <label class="flex items-center gap-3 cursor-pointer group">
+                    <input type="checkbox" value="apparel" onchange="applyFilters()" class="w-4 h-4 accent-[var(--accent)]">
+                    <span class="text-[var(--muted)] group-hover:text-white transition-colors text-sm">Apparel</span>
+                  </label>
+                  <label class="flex items-center gap-3 cursor-pointer group">
+                    <input type="checkbox" value="accessories" onchange="applyFilters()" class="w-4 h-4 accent-[var(--accent)]">
+                    <span class="text-[var(--muted)] group-hover:text-white transition-colors text-sm">Accessories</span>
+                  </label>
+                </div>
+              </div>
+              <button onclick="clearFilters()" class="text-[var(--accent)] text-sm hover:underline reveal">Clear All Filters</button>
+            </div>
+          </aside>
+          <div class="flex-1">
+            <div id="product-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PDP PAGE ========== -->
+  <div id="page-pdp" class="page">
+    <div class="pt-24 pb-24 min-h-screen">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="mb-8 reveal">
+          <ol class="flex items-center gap-2 text-sm text-[var(--muted)]">
+            <li><a href="#" onclick="navigateTo('home'); return false;" class="hover:text-white transition-colors">Home</a></li>
+            <li>/</li>
+            <li class="text-white" id="pdp-breadcrumb">Product</li>
+          </ol>
+        </nav>
+
+        <div class="grid lg:grid-cols-12 gap-8">
+          <div class="lg:col-span-1 order-2 lg:order-1 reveal">
+            <div id="pdp-thumbnails" class="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-visible custom-scroll"></div>
+          </div>
+          <div class="lg:col-span-6 order-1 lg:order-2 reveal">
+            <div class="relative aspect-square rounded-2xl overflow-hidden bg-[var(--card)] sticky top-24">
+              <img id="pdp-main-image" src="" alt="Product" class="w-full h-full object-cover">
+            </div>
+          </div>
+          <div class="lg:col-span-5 order-3 space-y-6 reveal" style="transition-delay: 0.1s">
+            <div>
+              <p class="text-[var(--accent)] text-sm font-medium tracking-widest mb-2" id="pdp-category">CATEGORY</p>
+              <h1 class="font-display text-2xl lg:text-3xl mb-2" id="pdp-title">Product Name</h1>
+            </div>
+            <div class="flex items-baseline gap-3">
+              <span class="font-display text-3xl text-white" id="pdp-price">$0</span>
+              <span class="text-[var(--muted)] line-through text-base" id="pdp-original">$0</span>
+            </div>
+            <div>
+              <span class="font-medium text-sm block mb-3">Select Size</span>
+              <div class="flex flex-wrap gap-2" id="pdp-sizes"></div>
+            </div>
+            <div>
+              <span class="font-medium text-sm block mb-3">Select Color</span>
+              <div class="flex gap-3" id="pdp-colors"></div>
+            </div>
+            <div class="flex gap-3">
+              <button onclick="addToCart()" class="btn-outline flex-1 py-3 rounded-xl font-semibold text-sm tracking-wide">ADD TO CART</button>
+              <button onclick="buyNow()" class="btn-primary flex-1 py-3 rounded-xl font-semibold text-sm tracking-wide">BUY NOW</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Related Products Section - Fixed -->
+        <section class="mt-16 lg:mt-20 pt-12 border-t border-[var(--border)]">
+          <h2 class="font-display text-2xl lg:text-3xl mb-8 reveal">RELATED PRODUCTS</h2>
+          <div id="related-products" class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== CHECKOUT & CONFIRMATION PAGES ========== -->
+  <div id="page-checkout" class="page">
+    <div class="pt-24 pb-12 min-h-screen">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="font-display text-3xl lg:text-4xl mb-8 reveal">CHECKOUT</h1>
+        <div class="grid lg:grid-cols-5 gap-8">
+          <div class="lg:col-span-3 space-y-8 reveal">
+            <div class="bg-[var(--card)] rounded-xl p-6 space-y-4">
+              <h2 class="font-semibold text-lg mb-4">Shipping Information</h2>
+              <input type="text" id="shipping-first" class="w-full bg-[var(--bg)] border border-[var(--border)] rounded-lg px-4 py-3 text-white text-sm" placeholder="Full Name">
+              <input type="email" id="shipping-email" class="w-full bg-[var(--bg)] border border-[var(--border)] rounded-lg px-4 py-3 text-white text-sm" placeholder="Email">
+            </div>
+            <div class="bg-[var(--card)] rounded-xl p-6 space-y-4">
+              <h2 class="font-semibold text-lg mb-4">Payment</h2>
+              <input type="text" id="card-number" class="w-full bg-[var(--bg)] border border-[var(--border)] rounded-lg px-4 py-3 text-white text-sm" placeholder="Card Number" oninput="formatCardNumber(this)">
+            </div>
+          </div>
+          <div class="lg:col-span-2">
+             <div class="bg-[var(--card)] rounded-xl p-6 sticky top-24">
+               <h2 class="font-semibold text-lg mb-4">Order Summary</h2>
+               <div id="checkout-items" class="space-y-4 max-h-64 overflow-y-auto custom-scroll mb-4"></div>
+               <div class="border-t border-[var(--border)] pt-4 flex justify-between font-semibold text-lg mb-4"><span>Total</span><span id="checkout-total">$0</span></div>
+               <button onclick="placeOrder()" class="w-full btn-primary py-3 rounded-xl font-semibold text-sm tracking-wide">PLACE ORDER</button>
+             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-confirmation" class="page">
+    <div class="pt-24 pb-12 min-h-screen flex items-center justify-center">
+      <div class="max-w-lg mx-auto px-4 text-center">
+        <div class="w-20 h-20 lg:w-24 lg:h-24 bg-[var(--accent)] rounded-full mx-auto mb-8 flex items-center justify-center">
+          <svg class="w-10 h-10 lg:w-12 lg:h-12 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <h1 class="font-display text-3xl lg:text-4xl mb-4 reveal">ORDER CONFIRMED</h1>
+        <button onclick="navigateTo('home'); return false;" class="btn-primary px-6 lg:px-8 py-3 rounded-full text-sm tracking-wide font-semibold mt-8 reveal">CONTINUE SHOPPING</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="bg-[var(--bg-elevated)] border-t border-[var(--border)] mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div class="col-span-2 md:col-span-1">
+          <a href="#" onclick="navigateTo('home'); return false;" class="font-display text-2xl tracking-wider text-white">URBAN EDGES</a>
+          <p class="text-[var(--muted)] text-sm mt-4">Premium streetwear and sneakers.</p>
+        </div>
+        <div>
+          <h4 class="font-semibold text-white mb-4 text-sm">Shop</h4>
+          <ul class="space-y-3 text-sm">
+            <li><a href="#" onclick="filterByCategory('sneakers'); return false;" class="text-[var(--muted)] hover:text-white transition-colors">Sneakers</a></li>
+            <li><a href="#" onclick="filterByCategory('apparel'); return false;" class="text-[var(--muted)] hover:text-white transition-colors">Apparel</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-white mb-4 text-sm">Support</h4>
+          <ul class="space-y-3 text-sm">
+            <li><a href="#" class="text-[var(--muted)] hover:text-white transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-white mb-4 text-sm">Company</h4>
+          <ul class="space-y-3 text-sm">
+            <li><a href="#" class="text-[var(--muted)] hover:text-white transition-colors">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== MODALS ========== -->
+  
+  <!-- Search Modal -->
+  <div id="search-modal" class="modal-overlay">
+    <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="closeSearch()"></div>
+    <div class="relative z-10 w-full max-w-2xl mx-auto mt-24 lg:mt-32 px-4">
+      <div class="bg-[var(--bg-elevated)] rounded-2xl p-4 lg:p-6 shadow-2xl">
+        <div class="flex items-center gap-4 border-b border-[var(--border)] pb-4 mb-4">
+          <svg class="w-5 h-5 lg:w-6 lg:h-6 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="search-input" oninput="performSearch(this.value)" class="flex-1 bg-transparent text-lg lg:text-xl text-white outline-none" placeholder="Search for products..." autocomplete="off">
+          <button onclick="closeSearch()" class="text-[var(--muted)] hover:text-white text-sm">ESC</button>
+        </div>
+        <div id="search-results" class="max-h-64 lg:max-h-96 overflow-y-auto custom-scroll"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Modal -->
+  <div id="cart-modal" class="modal-overlay">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeCart()"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-[var(--bg-elevated)] shadow-2xl transform transition-transform duration-300 translate-x-full" id="cart-panel">
+      <div class="flex flex-col h-full">
+        <div class="flex items-center justify-between p-4 lg:p-6 border-b border-[var(--border)]">
+          <h2 class="font-display text-xl lg:text-2xl">YOUR CART</h2>
+          <button onclick="closeCart()" class="p-2 hover:text-[var(--accent)] transition-colors"><svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto p-4 lg:p-6 space-y-4 custom-scroll"></div>
+        <div class="p-4 lg:p-6 border-t border-[var(--border)]">
+          <div class="flex justify-between font-semibold text-base lg:text-lg mb-4"><span>Subtotal</span><span id="cart-subtotal">$0</span></div>
+          <button onclick="proceedToCheckout()" class="w-full btn-primary py-3 rounded-xl font-semibold text-sm tracking-wide">CHECKOUT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Account Modal -->
+  <div id="account-modal" class="modal-overlay">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeAccountModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="bg-[var(--bg-elevated)] rounded-2xl w-full max-w-md p-6 lg:p-8 relative" id="account-panel">
+        <button onclick="closeAccountModal()" class="absolute top-4 right-4 p-2 hover:text-[var(--accent)] transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        <h2 class="font-display text-2xl lg:text-3xl mb-6">ACCOUNT</h2>
+        <input id="account-email" type="email" placeholder="Email" class="w-full bg-[var(--bg)] border border-[var(--border)] rounded-lg px-4 py-3 text-white mb-4 text-sm">
+        <button onclick="handleLogin(); return false;" class="w-full btn-primary py-3 rounded-xl font-semibold text-sm tracking-wide">SIGN IN</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[var(--accent)] text-black px-6 py-3 rounded-full font-semibold text-sm transform translate-y-20 opacity-0 transition-all duration-300 z-50"></div>
+
+  <script>
+    // DATA
+    const fallbackProducts = [
+      { id: 1, name: "Air Max Velocity", category: "sneakers", price: 189, originalPrice: 229, images: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop", "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=400&fit=crop"], sizes: ["US 7", "US 8", "US 9", "US 10"], colors: ["black", "white"], rating: 4.8, description: "Engineered for speed.", collection: "summer" },
+      { id: 2, name: "Street Runner Pro", category: "sneakers", price: 159, originalPrice: 199, images: ["https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=400&h=400&fit=crop"], sizes: ["US 8", "US 9"], colors: ["white"], rating: 4.6, description: "Lightweight and durable.", collection: "night" },
+      { id: 3, name: "Urban Bomber Jacket", category: "apparel", price: 249, originalPrice: 299, images: ["https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=400&fit=crop"], sizes: ["M", "L", "XL"], colors: ["black"], rating: 4.9, description: "Premium bomber.", collection: "heritage" },
+      { id: 4, name: "Tech Fleece Hoodie", category: "apparel", price: 129, originalPrice: 159, images: ["https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=400&fit=crop"], sizes: ["S", "M", "L"], colors: ["black"], rating: 4.7, description: "Ultra-soft fleece.", collection: "tech" },
+      { id: 5, name: "Classic Combat Boots", category: "accessories", price: 179, originalPrice: 219, images: ["https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=400&h=400&fit=crop"], sizes: ["US 9", "US 10"], colors: ["black"], rating: 4.5, description: "Rugged boots.", collection: "heritage" },
+      { id: 6, name: "Performance Runners", category: "sneakers", price: 199, originalPrice: 249, images: ["https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=400&fit=crop"], sizes: ["US 9", "US 10"], colors: ["white"], rating: 4.8, description: "High performance.", collection: "night" },
+      { id: 7, name: "Oversized Street Tee", category: "apparel", price: 59, originalPrice: 79, images: ["https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop"], sizes: ["M", "L"], colors: ["white"], rating: 4.4, description: "Relaxed fit.", collection: "summer" },
+      { id: 8, name: "Premium Watch", category: "accessories", price: 299, originalPrice: 399, images: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop"], sizes: ["One Size"], colors: ["black"], rating: 4.9, description: "Minimalist timepiece.", collection: "tech" },
+    ];
+
+    const fallbackHeroImages = [
+      { src: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=400&fit=crop" },
+      { src: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&h=400&fit=crop" },
+      { src: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=300&h=400&fit=crop" }
+    ];
+
+    const fallbackReviews = [
+      { id: 1, name: "Alex M.", avatar: "https://i.pravatar.cc/100?img=1", rating: 5, text: "Love my new sneakers!", date: "2 days ago" },
+      { id: 2, name: "Sarah K.", avatar: "https://i.pravatar.cc/100?img=5", rating: 5, text: "Bomber jacket exceeded expectations.", date: "1 week ago" },
+      { id: 3, name: "Mike T.", avatar: "https://i.pravatar.cc/100?img=3", rating: 4, text: "Solid quality and fast shipping.", date: "2 weeks ago" },
+    ];
+
+    const API_BASE = window.location.origin.startsWith('http://localhost:3000') ? '' : 'http://localhost:3000';
+    let products = [];
+    let heroImages = [];
+    let reviews = [];
+
+    async function api(path, options = {}) {
+      const response = await fetch(`${API_BASE}${path}`, {
+        headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+        ...options
+      });
+      if (!response.ok) {
+        throw new Error(`Request failed: ${response.status}`);
+      }
+      return response.json();
+    }
+
+    async function loadBootstrapData() {
+      try {
+        const data = await api('/api/bootstrap');
+        products = data.products || fallbackProducts;
+        heroImages = data.heroImages || fallbackHeroImages;
+        reviews = data.reviews || fallbackReviews;
+      } catch (err) {
+        console.warn('Using fallback data. Backend unavailable.', err);
+        products = fallbackProducts;
+        heroImages = fallbackHeroImages;
+        reviews = fallbackReviews;
+      }
+    }
+    // STATE
+    let cart = [];
+    let currentProduct = null;
+    let selectedSize = null;
+    let selectedColor = null;
+    let activeFilters = { categories: [], sizes: [], maxPrice: 500, collection: null };
+    let fannedIndex = 1;
+    let fannedAutoTimer = null;
+
+    // INIT
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!history.state) {
+        history.replaceState({ page: 'home' }, '', '#home');
+      }
+      
+      await loadBootstrapData();
+
+      initFannedImages();
+      renderNewArrivals();
+      renderBestSellers();
+      renderReviews();
+      renderProductGrid();
+      setupScrollReveal();
+      startFannedAutoCycle();
+    });
+
+    // HISTORY NAV
+    window.addEventListener('popstate', (e) => {
+      if (e.state && e.state.page) {
+        showPage(e.state.page, e.state.id, false);
+      } else {
+        showPage('home', null, false);
+      }
+    });
+
+    function navigateTo(page, id = null) {
+      history.pushState({ page, id }, '', id ? `#${page}/${id}` : `#${page}`);
+      showPage(page, id, true);
+    }
+
+    function showPage(page, id = null, pushHistory = false) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById(`page-${page}`);
+      if (target) { 
+        target.classList.add('active'); 
+        window.scrollTo(0, 0); 
+        triggerReveal(); 
+      }
+      
+      if (page === 'plp') renderProductGrid();
+      if (page === 'pdp' && id) openProduct(id, false);
+    }
+
+    // FANNED IMAGES
+    function initFannedImages() {
+      const container = document.getElementById('fanned-stack');
+      if (!container) return;
+      
+      container.innerHTML = '';
+      
+      heroImages.forEach((img, i) => {
+        const div = document.createElement('div');
+        div.className = 'fanned-image';
+        div.style.zIndex = i === 1 ? 30 : 10;
+        div.innerHTML = `<img src="${img.src}" alt="Featured ${i + 1}" draggable="false">`;
+        
+        div.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          stopFannedAutoCycle();
+          setActiveFanned(i);
+          startFannedAutoCycle();
+        });
+        
+        container.appendChild(div);
+      });
+      
+      setActiveFanned(1);
+    }
+
+    function setActiveFanned(index) {
+      fannedIndex = index;
+      const images = document.querySelectorAll('.fanned-image');
+      if (images.length === 0) return;
+      
+      images.forEach((img, i) => {
+        img.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+        
+        if (i === index) {
+          img.style.transform = `translateX(0px) rotate(0deg) scale(1)`;
+          img.style.zIndex = 30;
+          img.style.opacity = '1';
+          img.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.9)';
+        } else {
+          const diff = i - index;
+          const xOffset = diff * 90;
+          const rotation = diff * 8;
+          
+          img.style.transform = `translateX(${xOffset}px) rotate(${rotation}deg) scale(0.9)`;
+          img.style.zIndex = 10;
+          img.style.opacity = '0.8';
+          img.style.boxShadow = '0 10px 30px -10px rgba(0, 0, 0, 0.5)';
+        }
+      });
+    }
+
+    function cycleFanned(dir) {
+      stopFannedAutoCycle();
+      let next = fannedIndex + dir;
+      if (next < 0) next = 2;
+      if (next > 2) next = 0;
+      setActiveFanned(next);
+      startFannedAutoCycle();
+    }
+
+    function startFannedAutoCycle() {
+      stopFannedAutoCycle();
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      fannedAutoTimer = setInterval(() => {
+        cycleFanned(1);
+      }, 4000);
+    }
+    
+    function stopFannedAutoCycle() { 
+      if (fannedAutoTimer) {
+        clearInterval(fannedAutoTimer); 
+        fannedAutoTimer = null;
+      }
+    }
+
+    // SEARCH
+    function openSearch() {
+      const modal = document.getElementById('search-modal');
+      modal.classList.add('active');
+      document.getElementById('search-input').focus();
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSearch() {
+      const modal = document.getElementById('search-modal');
+      modal.classList.remove('active');
+      document.getElementById('search-input').value = '';
+      document.getElementById('search-results').innerHTML = '';
+      document.body.style.overflow = '';
+    }
+
+    function performSearch(query) {
+      const container = document.getElementById('search-results');
+      if (!query.trim()) { 
+        container.innerHTML = '<p class="text-[var(--muted)] text-center py-8 text-sm">Start typing to search...</p>'; 
+        return; 
+      }
+      
+      const results = products.filter(p => 
+        p.name.toLowerCase().includes(query.toLowerCase()) || 
+        p.category.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      if(results.length === 0) {
+        container.innerHTML = '<p class="text-[var(--muted)] text-center py-8 text-sm">No products found</p>';
+        return;
+      }
+      
+      container.innerHTML = results.map(p => `
+        <div class="flex items-center gap-4 p-3 hover:bg-[var(--card)] rounded-lg cursor-pointer transition-colors" onclick="openProduct(${p.id}); closeSearch();">
+          <img src="${p.images[0]}" class="w-14 h-14 lg:w-16 lg:h-16 rounded-lg object-cover bg-[var(--card)]">
+          <div class="flex-1 min-w-0">
+            <h4 class="font-medium text-sm truncate">${p.name}</h4>
+            <p class="text-xs text-[var(--accent)]">$${p.price}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // RENDER SECTIONS
+    function renderNewArrivals() {
+      const container = document.getElementById('new-arrivals');
+      if (!container) return;
+      container.innerHTML = products.slice(0, 4).map((p, i) => productCardHTML(p, i * 0.1)).join('');
+    }
+
+    function renderBestSellers() {
+      const container = document.getElementById('best-sellers');
+      if (!container) return;
+      container.innerHTML = products.slice(4, 8).map((p, i) => productCardHTML(p, i * 0.1)).join('');
+    }
+
+    function renderReviews() {
+      const container = document.getElementById('reviews-container');
+      if (!container) return;
+      container.innerHTML = reviews.map((r, i) => `
+        <div class="review-card bg-[var(--card)] rounded-xl p-4 lg:p-6 reveal" style="transition-delay: ${i * 0.1}s">
+          <div class="flex items-center gap-3 mb-4">
+            <img src="${r.avatar}" alt="${r.name}" class="w-10 h-10 lg:w-12 lg:h-12 rounded-full object-cover">
+            <div>
+              <p class="font-medium text-sm">${r.name}</p>
+              <p class="text-xs text-[var(--muted)]">${r.date}</p>
+            </div>
+          </div>
+          <div class="flex mb-2 text-[var(--accent)] text-sm">${'â˜…'.repeat(r.rating)}${'â˜†'.repeat(5-r.rating)}</div>
+          <p class="text-[var(--muted)] text-xs lg:text-sm">"${r.text}"</p>
+        </div>
+      `).join('');
+    }
+
+    // Product Card with Green Border Hover Effect
+    function productCardHTML(p, delay) {
+      return `
+        <div class="product-card reveal cursor-pointer group" style="transition-delay: ${delay}s" onclick="openProduct(${p.id})">
+          <div class="product-image-wrapper aspect-square mb-3">
+            <img src="${p.images[0]}" alt="${p.name}" class="product-image w-full h-full object-cover" loading="lazy">
+          </div>
+          <p class="text-xs text-[var(--muted)] uppercase tracking-wider mb-1">${p.category}</p>
+          <h3 class="font-medium text-sm lg:text-base truncate">${p.name}</h3>
+          <div class="flex items-center gap-2 mt-1">
+            <span class="font-semibold text-sm">$${p.price}</span>
+            <span class="text-[var(--muted)] line-through text-xs">$${p.originalPrice}</span>
+          </div>
+        </div>`;
+    }
+
+    // PLP
+    function renderProductGrid() {
+      const container = document.getElementById('product-grid');
+      if (!container) return;
+      
+      const filtered = products.filter(p => {
+        if (activeFilters.categories.length && !activeFilters.categories.includes(p.category)) return false;
+        if (activeFilters.collection && p.collection !== activeFilters.collection) return false;
+        if (p.price > activeFilters.maxPrice) return false;
+        return true;
+      });
+      
+      const countEl = document.getElementById('product-count');
+      if (countEl) countEl.textContent = filtered.length;
+      
+      container.innerHTML = filtered.map((p, i) => productCardHTML(p, i * 0.05)).join('');
+      triggerReveal();
+    }
+
+    function applyFilters() {
+      activeFilters.categories = Array.from(document.querySelectorAll('input[type="checkbox"]')).filter(cb => cb.checked).map(cb => cb.value);
+      renderProductGrid();
+    }
+    
+    function clearFilters() { 
+      activeFilters = { categories: [], sizes: [], maxPrice: 500, collection: null }; 
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+      renderProductGrid(); 
+    }
+    
+    function filterByCategory(cat) { 
+      clearFilters(); 
+      activeFilters.categories = [cat]; 
+      const checkbox = document.querySelector(`input[value="${cat}"]`);
+      if (checkbox) checkbox.checked = true;
+      navigateTo('plp'); 
+    }
+
+    // Filter by Collection - New function
+    function filterByCollection(collectionName) {
+      clearFilters();
+      activeFilters.collection = collectionName;
+      navigateTo('plp');
+    }
+
+    // PDP - Fixed to show related products
+    function openProduct(id, pushHistory = true) {
+      currentProduct = products.find(p => p.id === id);
+      if (!currentProduct) return;
+      
+      selectedSize = currentProduct.sizes[0];
+      selectedColor = currentProduct.colors[0];
+
+      if(pushHistory) { 
+        navigateTo('pdp', id); 
+        return; 
+      }
+
+      const breadcrumb = document.getElementById('pdp-breadcrumb');
+      const category = document.getElementById('pdp-category');
+      const title = document.getElementById('pdp-title');
+      const price = document.getElementById('pdp-price');
+      const original = document.getElementById('pdp-original');
+      const mainImage = document.getElementById('pdp-main-image');
+      const thumbnails = document.getElementById('pdp-thumbnails');
+      const sizes = document.getElementById('pdp-sizes');
+      const colors = document.getElementById('pdp-colors');
+
+      if (breadcrumb) breadcrumb.textContent = currentProduct.name;
+      if (category) category.textContent = currentProduct.category.toUpperCase();
+      if (title) title.textContent = currentProduct.name;
+      if (price) price.textContent = `$${currentProduct.price}`;
+      if (original) original.textContent = `$${currentProduct.originalPrice}`;
+      if (mainImage) mainImage.src = currentProduct.images[0];
+
+      if (thumbnails) {
+        thumbnails.innerHTML = currentProduct.images.map((img, i) => `
+          <button onclick="setMainImage(${i})" class="thumbnail w-14 h-14 lg:w-16 lg:h-16 rounded-lg overflow-hidden flex-shrink-0 ${i === 0 ? 'selected' : ''}">
+            <img src="${img}" class="w-full h-full object-cover">
+          </button>
+        `).join('');
+      }
+
+      if (sizes) {
+        sizes.innerHTML = currentProduct.sizes.map(s => `
+          <button onclick="selectSize('${s}')" class="size-btn px-3 lg:px-4 h-9 lg:h-10 border border-[var(--border)] rounded-lg text-xs lg:text-sm ${s === selectedSize ? 'selected' : ''}">${s}</button>
+        `).join('');
+      }
+
+      const colorMap = { black: '#000', white: '#fff' };
+      if (colors) {
+        colors.innerHTML = currentProduct.colors.map(c => `
+          <button onclick="selectColor('${c}')" class="color-swatch w-8 h-8 lg:w-10 lg:h-10 rounded-full border-2 ${c === selectedColor ? 'selected' : ''}" style="background: ${colorMap[c]}" aria-label="${c}"></button>
+        `).join('');
+      }
+
+      renderRelatedProducts();
+      
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const pdpPage = document.getElementById('page-pdp');
+      if (pdpPage) pdpPage.classList.add('active');
+      
+      window.scrollTo(0, 0);
+      triggerReveal();
+    }
+
+    function setMainImage(i) {
+      const mainImage = document.getElementById('pdp-main-image');
+      if (mainImage && currentProduct) {
+        mainImage.src = currentProduct.images[i];
+      }
+      document.querySelectorAll('.thumbnail').forEach((t, idx) => t.classList.toggle('selected', idx === i));
+    }
+
+    function selectSize(s) { 
+      selectedSize = s; 
+      document.querySelectorAll('#pdp-sizes .size-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.textContent === s);
+      }); 
+    }
+    
+    function selectColor(c) { 
+      selectedColor = c; 
+      document.querySelectorAll('.color-swatch').forEach((btn, idx) => {
+        if (currentProduct) {
+          btn.classList.toggle('selected', currentProduct.colors[idx] === c);
+        }
+      });
+    }
+
+    // FIXED: Render related products properly
+    function renderRelatedProducts() {
+      const container = document.getElementById('related-products');
+      if (!container || !currentProduct) return;
+      
+      const related = products.filter(p => 
+        p.category === currentProduct.category && p.id !== currentProduct.id
+      ).slice(0, 4);
+      
+      if (related.length < 4) {
+        const otherProducts = products.filter(p => 
+          p.id !== currentProduct.id && !related.find(r => r.id === p.id)
+        ).slice(0, 4 - related.length);
+        related.push(...otherProducts);
+      }
+      
+      container.innerHTML = related.map((p, i) => productCardHTML(p, i * 0.1)).join('');
+      
+      setTimeout(() => {
+        container.querySelectorAll('.reveal').forEach(el => {
+          el.classList.add('visible');
+        });
+      }, 100);
+    }
+
+    // CART
+    function addToCart() {
+      if (!currentProduct || !selectedSize) {
+        showToast('Please select a size');
+        return;
+      }
+      cart.push({ 
+        ...currentProduct, 
+        size: selectedSize, 
+        color: selectedColor, 
+        quantity: 1, 
+        cartId: Date.now() 
+      });
+      updateCartCount();
+      showToast('Added to cart');
+    }
+
+    function buyNow() { 
+      addToCart(); 
+      if(cart.length > 0) proceedToCheckout(); 
+    }
+    
+    function removeFromCart(i) { 
+      cart.splice(i, 1); 
+      updateCartCount(); 
+      renderCartItems(); 
+    }
+    
+    function updateCartCount() {
+      const count = cart.length;
+      const el = document.getElementById('cart-count');
+      if (el) {
+        el.textContent = count;
+        el.classList.toggle('hidden', count === 0);
+      }
+    }
+
+    function openCart() {
+      const modal = document.getElementById('cart-modal');
+      const panel = document.getElementById('cart-panel');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => panel.classList.remove('translate-x-full'), 10);
+      renderCartItems();
+    }
+
+    function closeCart() {
+      const modal = document.getElementById('cart-modal');
+      const panel = document.getElementById('cart-panel');
+      panel.classList.add('translate-x-full');
+      setTimeout(() => {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+      }, 300);
+    }
+
+    function renderCartItems() {
+      const container = document.getElementById('cart-items');
+      const subtotalEl = document.getElementById('cart-subtotal');
+      if (!container) return;
+      
+      if (!cart.length) { 
+        container.innerHTML = '<p class="text-center text-[var(--muted)] py-8 text-sm">Your cart is empty</p>'; 
+        if (subtotalEl) subtotalEl.textContent = '$0';
+        return; 
+      }
+      
+      container.innerHTML = cart.map((item, i) => `
+        <div class="flex gap-3 lg:gap-4">
+          <img src="${item.images[0]}" class="w-16 h-16 lg:w-20 lg:h-20 rounded-lg object-cover bg-[var(--card)]">
+          <div class="flex-1 min-w-0">
+            <h4 class="font-medium text-sm truncate">${item.name}</h4>
+            <p class="text-xs text-[var(--muted)]">${item.size}</p>
+            <div class="flex items-center justify-between mt-2">
+              <span class="font-semibold text-sm">$${item.price}</span>
+              <button onclick="removeFromCart(${i})" class="text-[var(--danger)] text-xs hover:underline">Remove</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+      
+      if (subtotalEl) subtotalEl.textContent = `$${cart.reduce((s, i) => s + i.price, 0)}`;
+    }
+
+    // CHECKOUT
+    function proceedToCheckout() { 
+      closeCart(); 
+      if (!cart.length) return; 
+      renderCheckoutItems(); 
+      navigateTo('checkout'); 
+    }
+    
+    function renderCheckoutItems() {
+      const container = document.getElementById('checkout-items');
+      const totalEl = document.getElementById('checkout-total');
+      if (!container) return;
+      
+      container.innerHTML = cart.map(item => `
+        <div class="flex gap-3">
+          <img src="${item.images[0]}" class="w-14 h-14 lg:w-16 lg:h-16 rounded-lg object-cover">
+          <div class="flex-1 min-w-0">
+            <h4 class="font-medium text-sm truncate">${item.name}</h4>
+            <span class="font-semibold text-sm">$${item.price}</span>
+          </div>
+        </div>
+      `).join('');
+      
+      if (totalEl) totalEl.textContent = `$${cart.reduce((s, i) => s + i.price, 0)}`;
+    }
+
+    function formatCardNumber(input) { 
+      input.value = input.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 '); 
+    }
+    
+    function placeOrder() {
+      cart = []; 
+      updateCartCount();
+      navigateTo('confirmation');
+    }
+
+    // ACCOUNT
+    function openAccountModal() { 
+      const modal = document.getElementById('account-modal');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeAccountModal() { 
+      const modal = document.getElementById('account-modal');
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    
+    function handleLogin() { 
+      showToast('Welcome!'); 
+      closeAccountModal(); 
+    }
+
+    // UTILS
+    function handleSubscribe(e) { 
+      e.preventDefault(); 
+      const email = document.getElementById('subscribe-email');
+      if (email && email.value) {
+        showToast('Subscribed successfully!'); 
+        email.value = '';
+      }
+    }
+    
+    function showToast(msg) { 
+      const t = document.getElementById('toast'); 
+      if (!t) return;
+      t.textContent = msg; 
+      t.classList.remove('translate-y-20', 'opacity-0'); 
+      setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 2500); 
+    }
+    
+    function setupScrollReveal() {
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => { 
+          if (e.isIntersecting) e.target.classList.add('visible'); 
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+      
+      document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    }
+
+    function triggerReveal() { 
+      setTimeout(() => {
+        document.querySelectorAll('.reveal').forEach(el => { 
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight && rect.bottom > 0) {
+            el.classList.add('visible'); 
+          }
+        });
+      }, 100); 
+    }
+
+    // Header scroll effect
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('main-header');
+      if (!header) return;
+      
+      if (window.pageYOffset > 50) { 
+        header.style.background = 'rgba(10, 10, 10, 0.95)'; 
+        header.style.backdropFilter = 'blur(10px)'; 
+      } else { 
+        header.style.background = 'transparent'; 
+        header.style.backdropFilter = 'none'; 
+      }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeSearch();
+        closeCart();
+        closeAccountModal();
+      }
+    });
+  </script>
+</body>
+</html>
+
+
