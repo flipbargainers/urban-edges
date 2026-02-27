@@ -1,17 +1,17 @@
 {
   "order_confirmation": {
-    "subject": "Your order is confirmed!",
-    "body": "Thank you for your order."
+    "subject": "Your URBAN EDGES order is confirmed!",
+    "body": "Thank you for your order. We'll send tracking info soon."
   },
   "shipping_confirmation": {
     "subject": "Your order has shipped!",
-    "body": "Your order is on its way."
+    "body": "Your order is on its way. Track it here."
   },
   "abandoned_cart": {
     "enabled": false,
     "delay_hours": 24,
     "subject": "You left something behind",
-    "body": "Complete your purchase.",
+    "body": "Complete your purchase and get exclusive access.",
     "discount_code": ""
   }
 }
