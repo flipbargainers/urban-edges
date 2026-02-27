@@ -34,7 +34,7 @@ content:
         label: Sizes
         type: string
       - name: section
-        label: Section (New or Regular)
+        label: Section
         type: string
       - name: image
         label: Product Image
