@@ -7,6 +7,33 @@
   },
   "currency": {
     "currency_code": "USD",
+    "currency_symbol": "$",
     "show_currency_selector": false
+  },
+  "taxes": {
+    "tax_included_in_prices": false,
+    "tax_rates": []
+  },
+  "shipping": {
+    "shipping_origin": "",
+    "free_shipping_threshold": 100,
+    "shipping_zones": []
+  },
+  "payments": {
+    "manual_payment": true,
+    "paypal_enabled": false,
+    "stripe_enabled": false,
+    "test_mode": true
+  },
+  "legal": {
+    "refund_policy": "",
+    "privacy_policy": "",
+    "terms_of_service": "",
+    "shipping_policy": ""
+  },
+  "integrations": {
+    "google_analytics": "",
+    "facebook_pixel": "",
+    "hotjar_id": ""
   }
 }
