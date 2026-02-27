@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>URBAN EDGES - Streetwear & Sneakers</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com "></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com ">
+  <link rel="preconnect" href="https://fonts.gstatic.com " crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300 ;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #0a0a0a;
@@ -37,7 +37,7 @@
       content: '';
       position: fixed;
       inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg '%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
       opacity: 0.03;
       pointer-events: none;
       z-index: 1000;
@@ -260,7 +260,6 @@
           <div class="space-y-6 z-10 text-center lg:text-left order-2 lg:order-1">
             <div class="space-y-4">
               <p class="text-[var(--accent)] font-medium tracking-widest text-sm stagger-item" style="animation-delay: 0.1s">NEW COLLECTION 2024</p>
-              <!-- CHANGE 1: Added IDs to Hero Tags -->
               <h1 id="hero-title" class="font-display text-5xl sm:text-6xl lg:text-7xl leading-none tracking-tight stagger-item" style="animation-delay: 0.2s">URBAN<br>EDGES</h1>
               <p id="hero-subtitle" class="text-[var(--muted)] text-base lg:text-lg max-w-md mx-auto lg:mx-0 stagger-item" style="animation-delay: 0.3s">Streetwear meets premium craftsmanship. Limited drops, timeless style. Built for those who move differently.</p>
             </div>
@@ -306,19 +305,19 @@
 
         <div class="grid md:grid-cols-3 gap-4 lg:gap-6">
           <div onclick="filterByCategory('sneakers')" class="reveal group cursor-pointer relative overflow-hidden rounded-2xl aspect-[4/5] bg-[var(--card)]" style="transition-delay: 0.1s">
-            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=500&fit=crop" alt="Sneakers" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=500&fit=crop " alt="Sneakers" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
             <div class="absolute bottom-6 left-6"><p class="font-display text-2xl lg:text-3xl">SNEAKERS</p><p class="text-[var(--muted)] text-sm">48 Products</p></div>
           </div>
 
           <div onclick="filterByCategory('apparel')" class="reveal group cursor-pointer relative overflow-hidden rounded-2xl aspect-[4/5] bg-[var(--card)]" style="transition-delay: 0.2s">
-            <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=500&fit=crop" alt="Apparel" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=500&fit=crop " alt="Apparel" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
             <div class="absolute bottom-6 left-6"><p class="font-display text-2xl lg:text-3xl">APPAREL</p><p class="text-[var(--muted)] text-sm">36 Products</p></div>
           </div>
 
           <div onclick="filterByCategory('accessories')" class="reveal group cursor-pointer relative overflow-hidden rounded-2xl aspect-[4/5] bg-[var(--card)]" style="transition-delay: 0.3s">
-            <img src="https://images.unsplash.com/photo-1523779105320-d1cd346ff52b?w=400&h=500&fit=crop" alt="Accessories" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <img src="https://images.unsplash.com/photo-1523779105320-d1cd346ff52b?w=400&h=500&fit=crop " alt="Accessories" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
             <div class="absolute bottom-6 left-6"><p class="font-display text-2xl lg:text-3xl">ACCESSORIES</p><p class="text-[var(--muted)] text-sm">24 Products</p></div>
           </div>
@@ -335,7 +334,6 @@
             <h2 class="font-display text-3xl lg:text-4xl">NEW ARRIVALS</h2>
           </div>
         </div>
-        <!-- CHANGE 2: Ensured Grid is Empty -->
         <div id="new-arrivals" class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6"></div>
       </div>
     </section>
@@ -388,7 +386,7 @@
         <div class="grid md:grid-cols-2 gap-6 lg:gap-8 mb-12">
           <!-- Summer Drop Collection -->
           <div onclick="filterByCollection('summer')" class="collection-card reveal aspect-[16/9] bg-[var(--card)]" style="transition-delay: 0.1s">
-            <img src="https://images.unsplash.com/photo-1556906781-9a412961c28c?w=800&h=450&fit=crop" alt="Summer Drop" class="w-full h-full object-cover">
+            <img src="https://images.unsplash.com/photo-1556906781-9a412961c28c?w=800&h=450&fit=crop " alt="Summer Drop" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
             <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
               <p class="text-[var(--accent)] text-xs font-medium tracking-widest mb-2">NEW DROP</p>
@@ -403,7 +401,7 @@
 
           <!-- Night Runner Collection -->
           <div onclick="filterByCollection('night')" class="collection-card reveal aspect-[16/9] bg-[var(--card)]" style="transition-delay: 0.2s">
-            <img src="https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=800&h=450&fit=crop" alt="Night Runner" class="w-full h-full object-cover">
+            <img src="https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=800&h=450&fit=crop " alt="Night Runner" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
             <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
               <p class="text-[var(--accent)] text-xs font-medium tracking-widest mb-2">LIMITED EDITION</p>
@@ -418,7 +416,7 @@
 
           <!-- Urban Tech Collection -->
           <div onclick="filterByCollection('tech')" class="collection-card reveal aspect-[16/9] bg-[var(--card)]" style="transition-delay: 0.3s">
-            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=450&fit=crop" alt="Urban Tech" class="w-full h-full object-cover">
+            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=450&fit=crop " alt="Urban Tech" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
             <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
               <p class="text-[var(--accent)] text-xs font-medium tracking-widest mb-2">TECH WEAR</p>
@@ -433,7 +431,7 @@
 
           <!-- Heritage Collection -->
           <div onclick="filterByCollection('heritage')" class="collection-card reveal aspect-[16/9] bg-[var(--card)]" style="transition-delay: 0.4s">
-            <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&h=450&fit=crop" alt="Heritage" class="w-full h-full object-cover">
+            <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&h=450&fit=crop " alt="Heritage" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
             <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
               <p class="text-[var(--accent)] text-xs font-medium tracking-widest mb-2">CLASSICS</p>
@@ -514,7 +512,6 @@
             </div>
           </aside>
           <div class="flex-1">
-            <!-- CHANGE 2: Ensured Grid is Empty -->
             <div id="product-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6"></div>
           </div>
         </div>
@@ -702,26 +699,26 @@
   <script>
     // DATA
     const products = [
-      { id: 1, name: "Air Max Velocity", category: "sneakers", price: 189, originalPrice: 229, images: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop", "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=400&fit=crop"], sizes: ["US 7", "US 8", "US 9", "US 10"], colors: ["black", "white"], rating: 4.8, description: "Engineered for speed.", collection: "summer" },
-      { id: 2, name: "Street Runner Pro", category: "sneakers", price: 159, originalPrice: 199, images: ["https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=400&h=400&fit=crop"], sizes: ["US 8", "US 9"], colors: ["white"], rating: 4.6, description: "Lightweight and durable.", collection: "night" },
-      { id: 3, name: "Urban Bomber Jacket", category: "apparel", price: 249, originalPrice: 299, images: ["https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=400&fit=crop"], sizes: ["M", "L", "XL"], colors: ["black"], rating: 4.9, description: "Premium bomber.", collection: "heritage" },
-      { id: 4, name: "Tech Fleece Hoodie", category: "apparel", price: 129, originalPrice: 159, images: ["https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=400&fit=crop"], sizes: ["S", "M", "L"], colors: ["black"], rating: 4.7, description: "Ultra-soft fleece.", collection: "tech" },
-      { id: 5, name: "Classic Combat Boots", category: "accessories", price: 179, originalPrice: 219, images: ["https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=400&h=400&fit=crop"], sizes: ["US 9", "US 10"], colors: ["black"], rating: 4.5, description: "Rugged boots.", collection: "heritage" },
-      { id: 6, name: "Performance Runners", category: "sneakers", price: 199, originalPrice: 249, images: ["https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=400&fit=crop"], sizes: ["US 9", "US 10"], colors: ["white"], rating: 4.8, description: "High performance.", collection: "night" },
-      { id: 7, name: "Oversized Street Tee", category: "apparel", price: 59, originalPrice: 79, images: ["https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop"], sizes: ["M", "L"], colors: ["white"], rating: 4.4, description: "Relaxed fit.", collection: "summer" },
-      { id: 8, name: "Premium Watch", category: "accessories", price: 299, originalPrice: 399, images: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop"], sizes: ["One Size"], colors: ["black"], rating: 4.9, description: "Minimalist timepiece.", collection: "tech" },
+      { id: 1, name: "Air Max Velocity", category: "sneakers", price: 189, originalPrice: 229, images: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop ", "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=400&fit=crop "], sizes: ["US 7", "US 8", "US 9", "US 10"], colors: ["black", "white"], rating: 4.8, description: "Engineered for speed.", collection: "summer" },
+      { id: 2, name: "Street Runner Pro", category: "sneakers", price: 159, originalPrice: 199, images: ["https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=400&h=400&fit=crop "], sizes: ["US 8", "US 9"], colors: ["white"], rating: 4.6, description: "Lightweight and durable.", collection: "night" },
+      { id: 3, name: "Urban Bomber Jacket", category: "apparel", price: 249, originalPrice: 299, images: ["https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=400&fit=crop "], sizes: ["M", "L", "XL"], colors: ["black"], rating: 4.9, description: "Premium bomber.", collection: "heritage" },
+      { id: 4, name: "Tech Fleece Hoodie", category: "apparel", price: 129, originalPrice: 159, images: ["https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=400&fit=crop "], sizes: ["S", "M", "L"], colors: ["black"], rating: 4.7, description: "Ultra-soft fleece.", collection: "tech" },
+      { id: 5, name: "Classic Combat Boots", category: "accessories", price: 179, originalPrice: 219, images: ["https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=400&h=400&fit=crop "], sizes: ["US 9", "US 10"], colors: ["black"], rating: 4.5, description: "Rugged boots.", collection: "heritage" },
+      { id: 6, name: "Performance Runners", category: "sneakers", price: 199, originalPrice: 249, images: ["https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=400&fit=crop "], sizes: ["US 9", "US 10"], colors: ["white"], rating: 4.8, description: "High performance.", collection: "night" },
+      { id: 7, name: "Oversized Street Tee", category: "apparel", price: 59, originalPrice: 79, images: ["https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop "], sizes: ["M", "L"], colors: ["white"], rating: 4.4, description: "Relaxed fit.", collection: "summer" },
+      { id: 8, name: "Premium Watch", category: "accessories", price: 299, originalPrice: 399, images: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop "], sizes: ["One Size"], colors: ["black"], rating: 4.9, description: "Minimalist timepiece.", collection: "tech" },
     ];
 
     const heroImages = [
-      { src: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=400&fit=crop" },
-      { src: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&h=400&fit=crop" },
-      { src: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=300&h=400&fit=crop" }
+      { src: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=400&fit=crop " },
+      { src: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&h=400&fit=crop " },
+      { src: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=300&h=400&fit=crop " }
     ];
 
     const reviews = [
-      { id: 1, name: "Alex M.", avatar: "https://i.pravatar.cc/100?img=1", rating: 5, text: "Love my new sneakers!", date: "2 days ago" },
-      { id: 2, name: "Sarah K.", avatar: "https://i.pravatar.cc/100?img=5", rating: 5, text: "Bomber jacket exceeded expectations.", date: "1 week ago" },
-      { id: 3, name: "Mike T.", avatar: "https://i.pravatar.cc/100?img=3", rating: 4, text: "Solid quality and fast shipping.", date: "2 weeks ago" },
+      { id: 1, name: "Alex M.", avatar: "https://i.pravatar.cc/100?img=1 ", rating: 5, text: "Love my new sneakers!", date: "2 days ago" },
+      { id: 2, name: "Sarah K.", avatar: "https://i.pravatar.cc/100?img=5 ", rating: 5, text: "Bomber jacket exceeded expectations.", date: "1 week ago" },
+      { id: 3, name: "Mike T.", avatar: "https://i.pravatar.cc/100?img=3 ", rating: 4, text: "Solid quality and fast shipping.", date: "2 weeks ago" },
     ];
 
     // STATE
@@ -1298,7 +1295,7 @@
       }
     });
 
-    // CHANGE 3: CMS Sync Logic
+    // CMS Sync Logic
     const GITHUB_REPO = "flipbargainers/urban-edges";
 
     async function syncWithCMS() {
