@@ -11,5 +11,18 @@
     "revenue_today": "$0.00",
     "visitors_today": 0
   },
-  "admin_notes": ""
+  "admin_notes": "",
+  "quick_actions": [
+    {
+      "label": "Add Product",
+      "icon": "plus",
+      "action": "Add Product"
+    }
+  ],
+  "admin_widgets": {
+    "show_recent_orders": true,
+    "show_low_stock": true,
+    "show_traffic_chart": true,
+    "show_reviews_pending": true
+  }
 }
