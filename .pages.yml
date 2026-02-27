@@ -1,41 +1,18 @@
-media:
-  input: frontend/images
-  output: images
-
 content:
   - name: settings
-    label: Website Settings
-    type: dictionary
+    label: Site Settings
+    type: file
     path: frontend/settings.json
     fields:
-      - name: hero_title
-        label: Hero Main Title
-        type: string
-      - name: hero_subtitle
-        label: Hero Subtitle
-        type: string
-      - name: hero_image
-        label: Hero Background Image
-        type: image
+      - { name: hero_title, label: Hero Title, type: string }
+      - { name: hero_subtitle, label: Hero Subtitle, type: string }
 
   - name: products
-    label: Shop Inventory
+    label: Products
     type: collection
     path: frontend/products
-    format: json
     fields:
-      - name: title
-        label: Product Name
-        type: string
-      - name: price
-        label: Price
-        type: string
-      - name: sizes
-        label: Sizes
-        type: string
-      - name: section
-        label: Section
-        type: string
-      - name: image
-        label: Product Image
-        type: image
+      - { name: title, label: Title, type: string }
+      - { name: price, label: Price, type: string }
+      - { name: image, label: Image URL, type: string }
+      - { name: section, label: Section, type: select, options: [New, All] }
