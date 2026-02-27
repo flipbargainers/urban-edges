@@ -1,1 +1,21 @@
-{}
+{
+  "global_settings": {
+    "site_title": "URBAN EDGES",
+    "accent_color": "#c8ff00",
+    "secondary_color": "#ff6b00",
+    "background_dark": "#0a0a0a",
+    "background_card": "#1a1a1a"
+  },
+  "header": {
+    "logo_type": "Text",
+    "logo_text": "URBAN EDGES",
+    "sticky_header": true,
+    "transparent_header": true
+  },
+  "homepage_sections": [],
+  "footer": {
+    "show_newsletter": true,
+    "show_social_links": true,
+    "copyright_text": "© 2024 URBAN EDGES. All rights reserved."
+  }
+}
