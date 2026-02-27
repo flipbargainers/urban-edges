@@ -1,159 +1,2078 @@
-  <script>
-    // ... (Keep all your existing JS logic like cart, navigation etc. above) ...
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                    URBAN EDGES - ENTERPRISE CMS SUITE                        ║
+# ║              Complete E-Commerce Control Panel (Shopify+ Edition)               ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
 
-    // ==========================================
-    // CMS INTEGRATION LOGIC
-    // ==========================================
-    const GITHUB_REPO = "flipbargainers/urban-edges"; // Change this to your repo
+media: media
 
-    async function syncWithCMS() {
-      try {
-        // 1. Load Global Settings (Hero)
-        const settings = await fetchFile('settings.json');
-        if (settings) {
-          updateText('hero-title', settings.hero_title);
-          updateText('hero-subtitle', settings.hero_subtitle);
-          updateText('site-logo', settings.site_name);
-        }
+# ═══════════════════════════════════════════════════════════════════════════════
+# 1. DASHBOARD & ANALYTICS (Command Center)
+# ═══════════════════════════════════════════════════════════════════════════════
+content:
+  - name: dashboard
+    label: 🏠 Dashboard
+    type: file
+    path: cms/dashboard.json
+    icon: layout-dashboard
+    fields:
+      - name: store_mode
+        label: 🎛️ Store Operating Mode
+        type: select
+        options:
+          - label: "🟢 LIVE - Store Open"
+            value: live
+          - label: "🔧 MAINTENANCE - Temporarily Closed"
+            value: maintenance
+          - label: "🔒 PASSWORD - Coming Soon"
+            value: password
+          - label: "📅 SCHEDULED - Auto-open at date"
+            value: scheduled
+        default: live
+        description: "Controls entire store visibility"
 
-        // 2. Load Navigation
-        const nav = await fetchFile('navigation.json');
-        if (nav && nav.links) renderNavigation(nav.links);
+      - name: maintenance_message
+        label: 🔧 Maintenance Page Message
+        type: rich-text
+        show_if:
+          field: store_mode
+          value: maintenance
 
-        // 3. Load Categories (Homepage Cards)
-        const cats = await fetchFile('categories.json');
-        if (cats && cats.list) renderCategories(cats.list);
+      - name: password_protection
+        label: 🔒 Store Password
+        type: string
+        show_if:
+          field: store_mode
+          value: password
 
-        // 4. Load Collections (Banners)
-        const colls = await fetchFile('collections.json');
-        if (colls && colls.collections) renderCollections(colls.collections);
+      - name: scheduled_launch
+        label: 📅 Launch Date & Time
+        type: datetime
+        show_if:
+          field: store_mode
+          value: scheduled
 
-        // 5. Load Reviews
-        const revs = await fetchFile('reviews.json');
-        if (revs && revs.items) renderReviews(revs.items);
+      - name: announcement_bars
+        label: 📢 Announcement Bars (Multiple)
+        type: list
+        description: "Add multiple announcement bars with scheduling"
+        fields:
+          - name: enabled
+            label: Active
+            type: boolean
+            default: true
+          - name: name
+            label: Internal Name
+            type: string
+          - name: message
+            label: Message Text
+            type: string
+          - name: message_type
+            label: Message Type
+            type: select
+            options:
+              - Info (Blue)
+              - Success (Green)
+              - Warning (Yellow)
+              - Error (Red)
+              - Promotion (Accent Color)
+              - Custom
+          - name: custom_background
+            label: Custom Background Color
+            type: string
+            show_if:
+              field: message_type
+              value: Custom
+          - name: custom_text_color
+            label: Custom Text Color
+            type: string
+            show_if:
+              field: message_type
+              value: Custom
+          - name: link_text
+            label: Link Text (optional)
+            type: string
+          - name: link_url
+            label: Link URL
+            type: string
+          - name: open_in_new_tab
+            label: Open in New Tab
+            type: boolean
+            default: true
+          - name: position
+            label: Position
+            type: select
+            options:
+              - Top Fixed
+              - Bottom Fixed
+              - Inline Header
+              - Above Footer
+          - name: schedule_enabled
+            label: Schedule This Banner
+            type: boolean
+            default: false
+          - name: start_date
+            label: Start Showing
+            type: datetime
+            show_if:
+              field: schedule_enabled
+              value: true
+          - name: end_date
+            label: Stop Showing
+            type: datetime
+            show_if:
+              field: schedule_enabled
+              value: true
+          - name: target_pages
+            label: Show On
+            type: select
+            options:
+              - All Pages
+              - Homepage Only
+              - Product Pages Only
+              - Collection Pages Only
+              - Checkout Only
+              - Custom Selection
+          - name: custom_pages
+            label: Select Specific Pages
+            type: list
+            show_if:
+              field: target_pages
+              value: Custom Selection
+            fields:
+              - name: page_path
+                label: Page URL Path
+                type: string
 
-        // 6. Load Products
-        await loadProducts();
+      - name: analytics_overview
+        label: 📊 Today's Overview
+        type: object
+        fields:
+          - name: revenue_today
+            label: Revenue Today ($)
+            type: string
+          - name: orders_today
+            label: Orders Count
+            type: number
+          - name: visitors_today
+            label: Unique Visitors
+            type: number
+          - name: conversion_rate
+            label: Conversion Rate (%)
+            type: string
+          - name: top_product_today
+            label: Best Seller Today
+            type: string
+          - name: inventory_alerts
+            label: Low Stock Alerts
+            type: number
 
-      } catch (e) { console.log("CMS Sync Error:", e); }
-    }
+      - name: quick_actions
+        label: ⚡ Quick Action Buttons
+        type: list
+        fields:
+          - name: label
+            label: Button Label
+            type: string
+          - name: icon
+            label: Icon (emoji or class)
+            type: string
+          - name: action
+            label: Action Type
+            type: select
+            options:
+              - Add Product
+              - View Orders
+              - Edit Theme
+              - View Analytics
+              - Custom URL
+          - name: custom_url
+            label: Custom URL
+            type: string
+            show_if:
+              field: action
+              value: Custom URL
 
-    // --- HELPER FUNCTIONS ---
+      - name: admin_widgets
+        label: 📌 Dashboard Widgets
+        type: object
+        fields:
+          - name: show_recent_orders
+            label: Recent Orders Widget
+            type: boolean
+            default: true
+          - name: show_low_stock
+            label: Low Stock Alert Widget
+            type: boolean
+            default: true
+          - name: show_traffic_chart
+            label: Traffic Chart Widget
+            type: boolean
+            default: true
+          - name: show_reviews_pending
+            label: Pending Reviews Widget
+            type: boolean
+            default: true
 
-    async function fetchFile(filename) {
-      const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_REPO}/main/frontend/${filename}`);
-      if (res.ok) return await res.json();
-      return null;
-    }
+# ═══════════════════════════════════════════════════════════════════════════════
+# 2. PRODUCT MANAGEMENT (Complete Inventory System)
+# ═══════════════════════════════════════════════════════════════════════════════
+  - name: products
+    label: 🛍️ Products
+    type: collection
+    path: cms/products
+    icon: package
+    view:
+      fields: [title, sku, featured_image, price, stock_status, status, sales_count]
+      sort: "created_at:desc"
+    fields:
+      - name: status
+        label: 🟢 Product Status
+        type: select
+        options:
+          - label: "✅ Active - Visible in Store"
+            value: active
+          - label: "📝 Draft - Hidden from Store"
+            value: draft
+          - label: "📦 Archived - Discontinued"
+            value: archived
+          - label: "⏰ Scheduled - Launch Later"
+            value: scheduled
+        default: active
 
-    function updateText(id, content) {
-      const el = document.getElementById(id);
-      if (el && content) el.innerHTML = content.replace(/(?:\r\n|\r|\n)/g, '<br>');
-    }
+      - name: scheduled_date
+        label: 🗓️ Launch Date & Time
+        type: datetime
+        show_if:
+          field: status
+          value: scheduled
 
-    async function loadProducts() {
-      const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/frontend/products`);
-      if (!res.ok) return;
-      const files = await res.json();
-      
-      for (let file of files) {
-        if (file.name.endsWith('.json')) {
-          const data = await fetch(file.download_url).then(r => r.json());
-          
-          // Check if image is a relative path (from CMS upload) or full URL
-          const imgSrc = data.image.includes('http') ? data.image : 
-                         `https://raw.githubusercontent.com/${GITHUB_REPO}/main/${data.image}`;
+      - name: title
+        label: 🏷️ Product Name
+        type: string
+        required: true
 
-          const cardHTML = `
-            <div class="product-card reveal visible cursor-pointer group" onclick="openProduct(${data.id || Date.now()})">
-              <div class="product-image-wrapper aspect-square mb-3">
-                <img src="${imgSrc}" alt="${data.title}" class="product-image w-full h-full object-cover" loading="lazy">
-              </div>
-              <p class="text-xs text-[var(--muted)] uppercase tracking-wider mb-1">${data.category || 'General'}</p>
-              <h3 class="font-medium text-sm truncate">${data.title}</h3>
-              <div class="flex items-center gap-2 mt-1">
-                <span class="font-semibold text-sm">$${data.price}</span>
-                ${data.original_price ? `<span class="text-[var(--muted)] line-through text-xs">$${data.original_price}</span>` : ''}
-              </div>
-            </div>`;
+      - name: slug
+        label: 🔗 URL Handle (auto-generated if empty)
+        type: string
+        pattern: "^[a-z0-9-]+$"
+        description: "yourstore.com/products/your-handle"
 
-          // Append to correct grid
-          if (data.section === "New") {
-            document.getElementById('new-arrivals').innerHTML += cardHTML;
-          } else if (data.section === "Best Seller") {
-             document.getElementById('best-sellers').innerHTML += cardHTML;
-          } else {
-             document.getElementById('product-grid').innerHTML += cardHTML;
-          }
-        }
-      }
-    }
+      - name: sku
+        label: 📦 SKU (Stock Keeping Unit)
+        type: string
+        required: true
+        pattern: "^[A-Z0-9-]+$"
+        description: "Unique identifier: UE-SNK-001"
 
-    // --- RENDER FUNCTIONS FOR NEW SECTIONS ---
+      - name: barcode
+        label: 📊 Barcode (ISBN, UPC, GTIN, etc.)
+        type: string
 
-    function renderCategories(list) {
-      const container = document.getElementById('categories-container'); // Ensure you wrap your HTML categories in this ID
-      if(!container) return;
-      // Clear existing hard-coded HTML if desired, or just update images/text
-      // This is a simplified injection for the homepage grid
-      const grid = container.querySelector('.grid');
-      if(grid) {
-        grid.innerHTML = ''; // Clear static content
-        list.forEach((cat, i) => {
-           const imgSrc = cat.image.includes('http') ? cat.image : 
-                         `https://raw.githubusercontent.com/${GITHUB_REPO}/main/${cat.image}`;
-           
-           grid.innerHTML += `
-            <div onclick="filterByCategory('${cat.slug}')" class="reveal group cursor-pointer relative overflow-hidden rounded-2xl aspect-[4/5] bg-[var(--card)]" style="transition-delay: ${i * 0.1}s">
-              <img src="${imgSrc}" alt="${cat.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-              <div class="absolute bottom-6 left-6"><p class="font-display text-2xl lg:text-3xl">${cat.name.toUpperCase()}</p><p class="text-[var(--muted)] text-sm">${cat.product_count}</p></div>
-            </div>`;
-        });
-      }
-    }
+      - name: featured_image
+        label: 🖼️ Featured Image (Main)
+        type: image
+        options:
+          path: media/products
+        required: true
 
-    function renderCollections(list) {
-       const container = document.getElementById('collections-grid'); // Ensure ID in HTML
-       if(!container) return;
-       container.innerHTML = '';
-       list.forEach(col => {
-         const imgSrc = col.image.includes('http') ? col.image : 
-                       `https://raw.githubusercontent.com/${GITHUB_REPO}/main/${col.image}`;
-         container.innerHTML += `
-          <div onclick="filterByCollection('${col.slug}')" class="collection-card reveal aspect-[16/9] bg-[var(--card)]">
-            <img src="${imgSrc}" alt="${col.title}" class="w-full h-full object-cover">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
-              <p class="text-[var(--accent)] text-xs font-medium tracking-widest mb-2">${col.tag}</p>
-              <h3 class="font-display text-2xl lg:text-3xl mb-2">${col.title}</h3>
-              <p class="text-[var(--muted)] text-sm mb-4">${col.description}</p>
-            </div>
-          </div>`;
-       });
-    }
+      - name: media_gallery
+        label: 🎞️ Product Media Gallery (Images + Video)
+        type: list
+        description: "Add multiple images, 360° spins, or videos"
+        fields:
+          - name: media_type
+            label: Media Type
+            type: select
+            options:
+              - Image
+              - Video (MP4)
+              - YouTube Embed
+              - 360° Spin
+          - name: file
+            label: Upload File
+            type: file
+            options:
+              path: media/products
+            show_if:
+              field: media_type
+              value: Image
+          - name: video_file
+            label: Video File
+            type: file
+            options:
+              path: media/products/videos
+            show_if:
+              field: media_type
+              value: Video (MP4)
+          - name: youtube_url
+            label: YouTube URL
+            type: string
+            show_if:
+              field: media_type
+              value: YouTube Embed
+          - name: spin_images
+            label: 360° Image Sequence
+            type: list
+            show_if:
+              field: media_type
+              value: 360° Spin
+            fields:
+              - name: frame
+                label: Frame Image
+                type: image
+          - name: alt_text
+            label: Alt Text (Accessibility)
+            type: string
+          - name: is_thumbnail
+            label: Use as Thumbnail
+            type: boolean
+            default: false
 
-    function renderReviews(list) {
-      const container = document.getElementById('reviews-container');
-      if(!container) return;
-      container.innerHTML = '';
-      list.forEach(r => {
-        const imgSrc = r.avatar.includes('http') ? r.avatar : 
-                      `https://raw.githubusercontent.com/${GITHUB_REPO}/main/${r.avatar}`;
-        container.innerHTML += `
-         <div class="review-card bg-[var(--card)] rounded-xl p-4 lg:p-6 reveal">
-            <div class="flex items-center gap-3 mb-4">
-              <img src="${imgSrc}" alt="${r.name}" class="w-10 h-10 lg:w-12 lg:h-12 rounded-full object-cover">
-              <div>
-                <p class="font-medium text-sm">${r.name}</p>
-                <p class="text-xs text-[var(--muted)]">${r.date}</p>
-              </div>
-            </div>
-            <div class="flex mb-2 text-[var(--accent)] text-sm">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
-            <p class="text-[var(--muted)] text-xs lg:text-sm">"${r.text}"</p>
-          </div>`;
-      });
-    }
+      - name: pricing
+        label: 💰 Pricing & Taxes
+        type: object
+        fields:
+          - name: price
+            label: Sale Price ($) *
+            type: number
+            required: true
+            min: 0
+            step: 0.01
+          - name: compare_at_price
+            label: Compare at Price ($) - Shows Discount
+            type: number
+            min: 0
+            step: 0.01
+            description: "Original price to show savings"
+          - name: cost_per_item
+            label: Your Cost ($) - For Profit Calculation
+            type: number
+            min: 0
+            step: 0.01
+          - name: profit_margin
+            label: Profit Margin (%)
+            type: string
+            description: "Auto-calculated"
+          - name: tax_category
+            label: Tax Category
+            type: select
+            options:
+              - Standard
+              - Reduced Rate
+              - Zero Rated
+              - Exempt
+          - name: tax_included
+            label: Price Includes Tax
+            type: boolean
+            default: false
 
-    window.addEventListener('DOMContentLoaded', syncWithCMS);
-  </script>
+      - name: inventory
+        label: 📊 Inventory Tracking
+        type: object
+        fields:
+          - name: track_quantity
+            label: Track Inventory Quantity
+            type: boolean
+            default: true
+          - name: quantity
+            label: Available Quantity
+            type: number
+            min: 0
+            show_if:
+              field: track_quantity
+              value: true
+          - name: low_stock_threshold
+            label: Low Stock Alert Level
+            type: number
+            default: 5
+            show_if:
+              field: track_quantity
+              value: true
+          - name: allow_overselling
+            label: Allow Sales When Out of Stock
+            type: boolean
+            default: false
+          - name: stock_status
+            label: Stock Status Display
+            type: select
+            options:
+              - In Stock
+              - Out of Stock
+              - Pre-Order
+              - Backorder
+              - Low Stock
+          - name: sku_warehouse
+            label: Warehouse Location
+            type: string
+          - name: restock_date
+            label: Expected Restock Date
+            type: date
+
+      - name: variants
+        label: 🎨 Product Variants (Size/Color/Style)
+        type: list
+        description: "Create variants with different prices/stock"
+        fields:
+          - name: variant_name
+            label: Variant Name
+            type: string
+            description: "e.g., 'Black / US 9'"
+          - name: variant_sku
+            label: Variant SKU
+            type: string
+          - name: variant_image
+            label: Variant Image (optional)
+            type: image
+          - name: variant_price
+            label: Variant Price ($)
+            type: number
+          - name: variant_quantity
+            label: Stock Quantity
+            type: number
+          - name: variant_options
+            label: Option Values
+            type: object
+            fields:
+              - name: size
+                label: Size
+                type: string
+              - name: color
+                label: Color
+                type: string
+              - name: material
+                label: Material
+                type: string
+
+      - name: options
+        label: ⚙️ Product Options (Size, Color, etc.)
+        type: list
+        fields:
+          - name: option_name
+            label: Option Name
+            type: string
+            description: "e.g., Size, Color, Material"
+          - name: option_values
+            label: Values (comma separated)
+            type: string
+            description: "e.g., Small, Medium, Large"
+
+      - name: categorization
+        label: 🏷️ Categories & Collections
+        type: object
+        fields:
+          - name: product_type
+            label: Product Type
+            type: select
+            options:
+              - Sneakers
+              - Apparel
+              - Accessories
+              - Headwear
+              - Bags
+              - Limited Edition
+              - Sale Items
+          - name: collections
+            label: Collections
+            type: list
+            fields:
+              - name: collection
+                label: Collection
+                type: string
+          - name: tags
+            label: Tags (for filtering/search)
+            type: list
+            fields:
+              - name: tag
+                label: Tag
+                type: string
+          - name: vendor
+            label: Brand/Vendor
+            type: string
+          - name: featured
+            label: ⭐ Featured Product (Show on Homepage)
+            type: boolean
+            default: false
+          - name: new_arrival
+            label: 🆕 New Arrival Badge
+            type: boolean
+            default: false
+          - name: bestseller
+            label: 🔥 Bestseller Badge
+            type: boolean
+            default: false
+
+      - name: description
+        label: 📝 Product Description
+        type: rich-text
+
+      - name: short_description
+        label: 📝 Short Description (for cards)
+        type: text
+        description: "Max 150 characters"
+
+      - name: specifications
+        label: 📋 Technical Specifications
+        type: list
+        fields:
+          - name: spec_name
+            label: Specification
+            type: string
+          - name: spec_value
+            label: Value
+            type: string
+
+      - name: shipping
+        label: 📦 Shipping & Dimensions
+        type: object
+        fields:
+          - name: physical_product
+            label: Physical Product (requires shipping)
+            type: boolean
+            default: true
+          - name: weight
+            label: Weight (kg)
+            type: number
+            step: 0.001
+          - name: dimensions
+            label: Dimensions (L × W × H cm)
+            type: object
+            fields:
+              - name: length
+                label: Length
+                type: number
+              - name: width
+                label: Width
+                type: number
+              - name: height
+                label: Height
+                type: number
+          - name: shipping_class
+            label: Shipping Class
+            type: select
+            options:
+              - Standard
+              - Express
+              - Free Shipping
+              - Heavy/Bulky
+              - Digital Download
+
+      - name: seo
+        label: 🔍 Search Engine Optimization
+        type: object
+        fields:
+          - name: seo_title
+            label: Page Title (60 chars max)
+            type: string
+          - name: seo_description
+            label: Meta Description (160 chars max)
+            type: text
+          - name: keywords
+            label: Keywords (comma separated)
+            type: string
+          - name: og_image
+            label: Social Share Image
+            type: image
+
+      - name: related_products
+        label: 🔗 Related Products & Cross-sells
+        type: object
+        fields:
+          - name: related_products_list
+            label: Related Products
+            type: list
+            fields:
+              - name: product
+                label: Product
+                type: string
+          - name: upsells
+            label: Upsells (More expensive alternatives)
+            type: list
+            fields:
+              - name: product
+                label: Product
+                type: string
+          - name: cross_sells
+            label: Cross-sells (Complementary items)
+            type: list
+            fields:
+              - name: product
+                label: Product
+                type: string
+
+      - name: visibility
+        label: 👁️ Visibility Settings
+        type: object
+        fields:
+          - name: visible_on_store
+            label: Show on Online Store
+            type: boolean
+            default: true
+          - name: visible_on_search
+            label: Show in Search Results
+            type: boolean
+            default: true
+          - name: visible_on_collections
+            label: Show in Collection Pages
+            type: boolean
+            default: true
+
+      - name: custom_fields
+        label: ➕ Custom Fields (Metafields)
+        type: list
+        description: "Add any custom data"
+        fields:
+          - name: namespace
+            label: Namespace
+            type: string
+          - name: key
+            label: Key
+            type: string
+          - name: value
+            label: Value
+            type: string
+          - name: value_type
+            label: Type
+            type: select
+            options:
+              - string
+              - integer
+              - boolean
+              - json
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 3. COLLECTIONS & CATEGORIES
+# ═══════════════════════════════════════════════════════════════════════════════
+  - name: collections
+    label: 📚 Collections
+    type: collection
+    path: cms/collections
+    icon: folder
+    fields:
+      - name: title
+        label: Collection Name
+        type: string
+        required: true
+
+      - name: slug
+        label: URL Handle
+        type: string
+
+      - name: description
+        label: Description
+        type: rich-text
+
+      - name: collection_type
+        label: Collection Type
+        type: select
+        options:
+          - Manual (Curated)
+          - Automated (By Conditions)
+        default: Manual
+
+      - name: conditions
+        label: Automation Conditions
+        type: list
+        show_if:
+          field: collection_type
+          value: Automated (By Conditions)
+        fields:
+          - name: field
+            label: Field
+            type: select
+            options:
+              - Product Type
+              - Vendor
+              - Tag
+              - Price
+              - Stock Status
+          - name: operator
+            label: Operator
+            type: select
+            options:
+              - equals
+              - contains
+              - greater_than
+              - less_than
+          - name: value
+            label: Value
+            type: string
+
+      - name: featured_image
+        label: Collection Image
+        type: image
+
+      - name: layout
+        label: Layout Style
+        type: select
+        options:
+          - Grid
+          - List
+          - Masonry
+          - Lookbook
+
+      - name: products_per_page
+        label: Products Per Page
+        type: number
+        default: 12
+
+      - name: sort_order
+        label: Default Sort
+        type: select
+        options:
+          - Manual
+          - Best Selling
+          - Price: Low to High
+          - Price: High to Low
+          - Newest
+          - Name: A-Z
+
+      - name: seo
+        label: SEO Settings
+        type: object
+        fields:
+          - name: title
+            label: SEO Title
+            type: string
+          - name: description
+            label: SEO Description
+            type: text
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 4. ORDERS & CUSTOMERS (CRM)
+# ═══════════════════════════════════════════════════════════════════════════════
+  - name: orders
+    label: 📦 Orders
+    type: collection
+    path: cms/orders
+    icon: shopping-bag
+    view:
+      fields: [order_number, customer_name, total, payment_status, fulfillment_status, created_at]
+    fields:
+      - name: order_number
+        label: Order #
+        type: string
+        required: true
+
+      - name: created_at
+        label: Order Date
+        type: datetime
+        required: true
+
+      - name: customer
+        label: 👤 Customer Information
+        type: object
+        fields:
+          - name: customer_id
+            label: Customer ID
+            type: string
+          - name: email
+            label: Email
+            type: string
+            required: true
+          - name: phone
+            label: Phone
+            type: string
+          - name: first_name
+            label: First Name
+            type: string
+          - name: last_name
+            label: Last Name
+            type: string
+          - name: accepts_marketing
+            label: Subscribed to Newsletter
+            type: boolean
+
+      - name: line_items
+        label: 🛍️ Order Items
+        type: list
+        required: true
+        fields:
+          - name: product_id
+            label: Product ID
+            type: string
+          - name: title
+            label: Product Name
+            type: string
+          - name: variant_title
+            label: Variant (Size/Color)
+            type: string
+          - name: sku
+            label: SKU
+            type: string
+          - name: quantity
+            label: Qty
+            type: number
+          - name: price
+            label: Unit Price
+            type: number
+          - name: total_discount
+            label: Discount
+            type: number
+
+      - name: financial_status
+        label: 💳 Payment Status
+        type: select
+        options:
+          - Pending
+          - Authorized
+          - Partially Paid
+          - Paid
+          - Partially Refunded
+          - Refunded
+          - Voided
+
+      - name: fulfillment_status
+        label: 📦 Fulfillment Status
+        type: select
+        options:
+          - Unfulfilled
+          - Partially Fulfilled
+          - Fulfilled
+          - Restocked
+          - Cancelled
+
+      - name: shipping_address
+        label: 📍 Shipping Address
+        type: object
+        fields:
+          - name: name
+            label: Recipient Name
+            type: string
+          - name: company
+            label: Company
+            type: string
+          - name: address1
+            label: Address Line 1
+            type: string
+          - name: address2
+            label: Address Line 2
+            type: string
+          - name: city
+            label: City
+            type: string
+          - name: province
+            label: State/Province
+            type: string
+          - name: country
+            label: Country
+            type: string
+          - name: zip
+            label: ZIP/Postal
+            type: string
+          - name: phone
+            label: Phone
+            type: string
+
+      - name: billing_address
+        label: 💳 Billing Address (if different)
+        type: object
+        fields:
+          - name: same_as_shipping
+            label: Same as Shipping
+            type: boolean
+            default: true
+
+      - name: shipping_method
+        label: 🚚 Shipping Method
+        type: object
+        fields:
+          - name: carrier
+            label: Carrier
+            type: select
+            options:
+              - USPS
+              - UPS
+              - FedEx
+              - DHL
+              - Local Delivery
+              - Digital
+          - name: service
+            label: Service Level
+            type: string
+          - name: tracking_number
+            label: Tracking #
+            type: string
+          - name: tracking_url
+            label: Tracking URL
+            type: string
+          - name: shipped_at
+            label: Shipped Date
+            type: datetime
+          - name: estimated_delivery
+            label: Estimated Delivery
+            type: date
+
+      - name: payment_method
+        label: 💰 Payment Method
+        type: object
+        fields:
+          - name: gateway
+            label: Gateway
+            type: select
+            options:
+              - Credit Card
+              - PayPal
+              - Apple Pay
+              - Google Pay
+              - Bank Transfer
+              - Cash on Delivery
+              - Cryptocurrency
+          - name: card_last_four
+            label: Card Last 4
+            type: string
+
+      - name: totals
+        label: 💵 Order Totals
+        type: object
+        fields:
+          - name: subtotal
+            label: Subtotal
+            type: number
+          - name: shipping
+            label: Shipping
+            type: number
+          - name: taxes
+            label: Taxes
+            type: number
+          - name: discounts
+            label: Discounts
+            type: number
+          - name: total
+            label: Total
+            type: number
+            required: true
+          - name: currency
+            label: Currency
+            type: string
+            default: USD
+
+      - name: discount_codes
+        label: 🏷️ Discount Codes Used
+        type: list
+        fields:
+          - name: code
+            label: Code
+            type: string
+          - name: amount
+            label: Amount Saved
+            type: number
+          - name: type
+            label: Type
+            type: select
+            options:
+              - Percentage
+              - Fixed Amount
+              - Free Shipping
+
+      - name: notes
+        label: 📝 Notes
+        type: object
+        fields:
+          - name: customer_note
+            label: Customer Note
+            type: text
+          - name: staff_notes
+            label: Staff/Internal Notes
+            type: text
+          - name: gift_message
+            label: Gift Message
+            type: text
+
+      - name: tags
+        label: 🏷️ Order Tags
+        type: list
+        fields:
+          - name: tag
+            label: Tag
+            type: string
+
+      - name: risk_level
+        label: ⚠️ Fraud Risk Level
+        type: select
+        options:
+          - Low
+          - Medium
+          - High
+
+  - name: customers
+    label: 👥 Customers
+    type: collection
+    path: cms/customers
+    icon: users
+    fields:
+      - name: customer_id
+        label: Customer ID
+        type: string
+      - name: email
+        label: Email
+        type: string
+        required: true
+      - name: first_name
+        label: First Name
+        type: string
+      - name: last_name
+        label: Last Name
+        type: string
+      - name: phone
+        label: Phone
+        type: string
+      - name: addresses
+        label: Saved Addresses
+        type: list
+        fields:
+          - name: address
+            label: Address
+            type: object
+      - name: order_history
+        label: Order History
+        type: list
+        fields:
+          - name: order_id
+            label: Order ID
+            type: string
+      - name: total_spent
+        label: Total Spent
+        type: number
+      - name: orders_count
+        label: Total Orders
+        type: number
+      - name: tags
+        label: Customer Tags
+        type: list
+        fields:
+          - name: tag
+            label: Tag
+            type: string
+      - name: accepts_marketing
+        label: Email Marketing Consent
+        type: boolean
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 5. THEME EDITOR (Complete Visual Control)
+# ═══════════════════════════════════════════════════════════════════════════════
+  - name: theme
+    label: 🎨 Theme Editor
+    type: file
+    path: cms/theme.json
+    icon: paintbrush
+    fields:
+      - name: global_settings
+        label: 🌍 Global Settings
+        type: object
+        fields:
+          - name: site_title
+            label: Site Title
+            type: string
+          - name: favicon
+            label: Favicon
+            type: image
+          - name: accent_color
+            label: Primary Accent Color
+            type: string
+            default: "#c8ff00"
+          - name: secondary_color
+            label: Secondary Color
+            type: string
+            default: "#ff6b00"
+          - name: background_dark
+            label: Dark Background
+            type: string
+            default: "#0a0a0a"
+          - name: background_card
+            label: Card Background
+            type: string
+            default: "#1a1a1a"
+          - name: text_primary
+            label: Primary Text
+            type: string
+            default: "#f5f5f5"
+          - name: text_muted
+            label: Muted Text
+            type: string
+            default: "#737373"
+          - name: font_heading
+            label: Heading Font
+            type: select
+            options:
+              - Bebas Neue
+              - Inter
+              - Roboto
+              - Montserrat
+              - Playfair Display
+          - name: font_body
+            label: Body Font
+            type: select
+            options:
+              - Inter
+              - DM Sans
+              - Roboto
+              - Open Sans
+
+      - name: header
+        label: 📍 Header & Navigation
+        type: object
+        fields:
+          - name: logo_type
+            label: Logo Type
+            type: select
+            options:
+              - Text
+              - Image
+          - name: logo_text
+            label: Logo Text
+            type: string
+            show_if:
+              field: logo_type
+              value: Text
+          - name: logo_image
+            label: Logo Image
+            type: image
+            show_if:
+              field: logo_type
+              value: Image
+          - name: logo_width
+            label: Logo Width (px)
+            type: number
+            default: 180
+          - name: header_layout
+            label: Header Layout
+            type: select
+            options:
+              - Logo Left - Menu Center - Icons Right
+              - Logo Center - Menu Below
+              - Logo Left - Menu Right
+              - Minimal
+          - name: sticky_header
+            label: Sticky Header on Scroll
+            type: boolean
+            default: true
+          - name: transparent_header
+            label: Transparent on Homepage
+            type: boolean
+            default: true
+          - name: announcement_bar
+            label: Show Announcement Bar
+            type: boolean
+            default: true
+          - name: search_in_header
+            label: Show Search Icon
+            type: boolean
+            default: true
+          - name: account_icon
+            label: Show Account Icon
+            type: boolean
+            default: true
+          - name: cart_icon
+            label: Show Cart Icon
+            type: boolean
+            default: true
+
+      - name: navigation_menus
+        label: 🧭 Navigation Menus
+        type: object
+        fields:
+          - name: main_menu
+            label: Main Menu
+            type: list
+            fields:
+              - name: label
+                label: Label
+                type: string
+              - name: url
+                label: URL
+                type: string
+              - name: type
+                label: Link Type
+                type: select
+                options:
+                  - Page
+                  - Collection
+                  - Product
+                  - External URL
+              - name: mega_menu
+                label: Enable Mega Menu
+                type: boolean
+                default: false
+              - name: mega_menu_columns
+                label: Mega Menu Columns
+                type: list
+                show_if:
+                  field: mega_menu
+                  value: true
+                fields:
+                  - name: column_title
+                    label: Column Title
+                    type: string
+                  - name: links
+                    label: Links
+                    type: list
+                    fields:
+                      - name: label
+                        label: Label
+                        type: string
+                      - name: url
+                        label: URL
+                        type: string
+              - name: highlight
+                label: Highlight (Accent Color)
+                type: boolean
+                default: false
+          - name: mobile_menu
+            label: Mobile Menu (different layout)
+            type: list
+            fields:
+              - name: label
+                label: Label
+                type: string
+              - name: url
+                label: URL
+                type: string
+
+      - name: homepage_sections
+        label: 🏠 Homepage Sections (Drag to Reorder)
+        type: list
+        description: "Add, remove, or reorder homepage sections"
+        fields:
+          - name: section_type
+            label: Section Type
+            type: select
+            options:
+              - Hero Banner
+              - Featured Collection
+              - Product Grid
+              - Image with Text
+              - Video
+              - Testimonials/Reviews
+              - Newsletter
+              - Instagram Feed
+              - Text Columns
+              - Custom HTML
+          - name: enabled
+            label: Visible
+            type: boolean
+            default: true
+          - name: custom_id
+            label: Section ID (for anchor links)
+            type: string
+
+          # HERO SECTION SETTINGS
+          - name: hero_layout
+            label: Hero Layout
+            type: select
+            show_if:
+              field: section_type
+              value: Hero Banner
+            options:
+              - Full Screen
+              - Split (Text Left / Image Right)
+              - Split (Text Right / Image Left)
+              - Centered Text
+              - Video Background
+          - name: hero_height
+            label: Hero Height
+            type: select
+            show_if:
+              field: section_type
+              value: Hero Banner
+            options:
+              - 100vh (Full Screen)
+              - 80vh
+              - 60vh
+              - 500px
+              - 400px
+          - name: hero_background_type
+            label: Background Type
+            type: select
+            show_if:
+              field: section_type
+              value: Hero Banner
+            options:
+              - Image
+              - Video
+              - Solid Color
+              - Gradient
+          - name: hero_background_image
+            label: Background Image
+            type: image
+            show_if:
+              field: hero_background_type
+              value: Image
+          - name: hero_background_video
+            label: Background Video (MP4 or YouTube)
+            type: string
+            show_if:
+              field: hero_background_type
+              value: Video
+          - name: hero_overlay_opacity
+            label: Dark Overlay Opacity (%)
+            type: number
+            min: 0
+            max: 100
+            default: 30
+            show_if:
+              field: section_type
+              value: Hero Banner
+          - name: hero_text_alignment
+            label: Text Alignment
+            type: select
+            show_if:
+              field: section_type
+              value: Hero Banner
+            options:
+              - Left
+              - Center
+              - Right
+          - name: hero_headline
+            label: Headline
+            type: string
+            show_if:
+              field: section_type
+              value: Hero Banner
+          - name: hero_subheadline
+            label: Subheadline
+            type: text
+            show_if:
+              field: section_type
+              value: Hero Banner
+          - name: hero_tagline
+            label: Top Tagline (small text above)
+            type: string
+            show_if:
+              field: section_type
+              value: Hero Banner
+          - name: hero_primary_button
+            label: Primary Button
+            type: object
+            show_if:
+              field: section_type
+              value: Hero Banner
+            fields:
+              - name: text
+                label: Button Text
+                type: string
+              - name: url
+                label: Button URL
+                type: string
+              - name: style
+                label: Button Style
+                type: select
+                options:
+                  - Solid Accent
+                  - Outline White
+                  - Ghost
+          - name: hero_secondary_button
+            label: Secondary Button
+            type: object
+            show_if:
+              field: section_type
+              value: Hero Banner
+            fields:
+              - name: enabled
+                label: Show Secondary Button
+                type: boolean
+              - name: text
+                label: Button Text
+                type: string
+              - name: url
+                label: Button URL
+                type: string
+          - name: hero_fanned_images
+            label: Fanned Product Images (3 images)
+            type: list
+            max: 3
+            show_if:
+              field: section_type
+              value: Hero Banner
+            fields:
+              - name: image
+                label: Image
+                type: image
+              - name: link
+                label: Link to Product
+                type: string
+          - name: hero_scroll_indicator
+            label: Show Scroll Down Indicator
+            type: boolean
+            default: true
+            show_if:
+              field: section_type
+              value: Hero Banner
+
+          # PRODUCT GRID SETTINGS
+          - name: grid_title
+            label: Section Title
+            type: string
+            show_if:
+              field: section_type
+              value: Product Grid
+          - name: grid_collection
+            label: Collection to Show
+            type: string
+            show_if:
+              field: section_type
+              value: Product Grid
+          - name: grid_products_limit
+            label: Number of Products
+            type: number
+            default: 8
+            show_if:
+              field: section_type
+              value: Product Grid
+          - name: grid_columns_desktop
+            label: Columns (Desktop)
+            type: select
+            show_if:
+              field: section_type
+              value: Product Grid
+            options:
+              - 2
+              - 3
+              - 4
+              - 5
+              - 6
+          - name: grid_columns_mobile
+            label: Columns (Mobile)
+            type: select
+            show_if:
+              field: section_type
+              value: Product Grid
+            options:
+              - 1
+              - 2
+          - name: grid_show_view_all
+            label: Show "View All" Button
+            type: boolean
+            default: true
+            show_if:
+              field: section_type
+              value: Product Grid
+
+          # IMAGE WITH TEXT SETTINGS
+          - name: imagetext_layout
+            label: Layout
+            type: select
+            show_if:
+              field: section_type
+              value: Image with Text
+            options:
+              - Image Left / Text Right
+              - Image Right / Text Left
+              - Image Above / Text Below
+          - name: imagetext_image
+            label: Image
+            type: image
+            show_if:
+              field: section_type
+              value: Image with Text
+          - name: imagetext_heading
+            label: Heading
+            type: string
+            show_if:
+              field: section_type
+              value: Image with Text
+          - name: imagetext_text
+            label: Text Content
+            type: rich-text
+            show_if:
+              field: section_type
+              value: Image with Text
+          - name: imagetext_button
+            label: Button
+            type: object
+            show_if:
+              field: section_type
+              value: Image with Text
+            fields:
+              - name: enabled
+                label: Show Button
+                type: boolean
+              - name: text
+                label: Button Text
+                type: string
+              - name: url
+                label: Button URL
+                type: string
+
+          # TESTIMONIALS SETTINGS
+          - name: testimonials_title
+            label: Section Title
+            type: string
+            show_if:
+              field: section_type
+              value: Testimonials/Reviews
+          - name: testimonials
+            label: Testimonials
+            type: list
+            show_if:
+              field: section_type
+              value: Testimonials/Reviews
+            fields:
+              - name: quote
+                label: Quote
+                type: text
+              - name: author_name
+                label: Customer Name
+                type: string
+              - name: author_image
+                label: Customer Photo
+                type: image
+              - name: author_title
+                label: Title/Location (optional)
+                type: string
+              - name: rating
+                label: Star Rating
+                type: select
+                options:
+                  - 5
+                  - 4
+                  - 3
+                  - 2
+                  - 1
+
+          # NEWSLETTER SETTINGS
+          - name: newsletter_title
+            label: Heading
+            type: string
+            show_if:
+              field: section_type
+              value: Newsletter
+          - name: newsletter_text
+            label: Description
+            type: text
+            show_if:
+              field: section_type
+              value: Newsletter
+          - name: newsletter_placeholder
+            label: Email Placeholder Text
+            type: string
+            show_if:
+              field: section_type
+              value: Newsletter
+          - name: newsletter_button
+            label: Button Text
+            type: string
+            show_if:
+              field: section_type
+              value: Newsletter
+          - name: newsletter_background
+            label: Background Style
+            type: select
+            show_if:
+              field: section_type
+              value: Newsletter
+            options:
+              - Accent Color
+              - Dark
+              - Image
+              - Gradient
+
+          # CUSTOM HTML
+          - name: custom_html
+            label: Custom HTML Code
+            type: text
+            show_if:
+              field: section_type
+              value: Custom HTML
+
+      - name: product_pages
+        label: 👕 Product Page Settings
+        type: object
+        fields:
+          - name: show_vendor
+            label: Show Vendor/Brand
+            type: boolean
+            default: true
+          - name: show_sku
+            label: Show SKU
+            type: boolean
+            default: true
+          - name: show_stock_status
+            label: Show Stock Status
+            type: boolean
+            default: true
+          - name: show_share_buttons
+            label: Show Social Share Buttons
+            type: boolean
+            default: true
+          - name: image_zoom
+            label: Enable Image Zoom on Hover
+            type: boolean
+            default: true
+          - name: image_layout
+            label: Image Gallery Layout
+            type: select
+            options:
+              - Thumbnails Left
+              - Thumbnails Below
+              - Stacked (no thumbs)
+              - Grid
+          - name: sticky_cart
+            label: Sticky "Add to Cart" on Mobile
+            type: boolean
+            default: true
+
+      - name: collection_pages
+        label: 📚 Collection Page Settings
+        type: object
+        fields:
+          - name: default_sort
+            label: Default Sort Order
+            type: select
+            options:
+              - Featured
+              - Best Selling
+              - Price: Low to High
+              - Price: High to Low
+              - Newest
+              - Name: A-Z
+          - name: products_per_page
+            label: Products Per Page
+            type: number
+            default: 12
+          - name: show_filters
+            label: Show Filter Sidebar
+            type: boolean
+            default: true
+          - name: enable_infinite_scroll
+            label: Enable Infinite Scroll
+            type: boolean
+            default: false
+
+      - name: cart_drawer
+        label: 🛒 Cart & Checkout
+        type: object
+        fields:
+          - name: cart_type
+            label: Cart Type
+            type: select
+            options:
+              - Drawer (Slide from right)
+              - Page (Separate page)
+              - Modal (Popup)
+          - name: show_cart_notes
+            label: Allow Order Notes
+            type: boolean
+            default: true
+          - name: show_shipping_calculator
+            label: Show Shipping Calculator
+            type: boolean
+            default: true
+          - name: enable_cart_recommendations
+            label: Show Product Recommendations in Cart
+            type: boolean
+            default: true
+
+      - name: footer
+        label: 📋 Footer Settings
+        type: object
+        fields:
+          - name: footer_logo
+            label: Footer Logo
+            type: image
+          - name: footer_text
+            label: Footer Tagline/Text
+            type: text
+          - name: footer_columns
+            label: Footer Menu Columns
+            type: list
+            fields:
+              - name: title
+                label: Column Title
+                type: string
+              - name: links
+                label: Links
+                type: list
+                fields:
+                  - name: label
+                    label: Label
+                    type: string
+                  - name: url
+                    label: URL
+                    type: string
+          - name: show_newsletter
+            label: Show Newsletter Signup
+            type: boolean
+            default: true
+          - name: show_social_links
+            label: Show Social Media Icons
+            type: boolean
+            default: true
+          - name: social_links
+            label: Social Media URLs
+            type: object
+            fields:
+              - name: instagram
+                label: Instagram
+                type: string
+              - name: twitter
+                label: Twitter/X
+                type: string
+              - name: facebook
+                label: Facebook
+                type: string
+              - name: tiktok
+                label: TikTok
+                type: string
+              - name: youtube
+                label: YouTube
+                type: string
+              - name: pinterest
+                label: Pinterest
+                type: string
+          - name: payment_icons
+            label: Show Payment Method Icons
+            type: boolean
+            default: true
+          - name: copyright_text
+            label: Copyright Text
+            type: string
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 6. PAGES & CONTENT MANAGEMENT
+# ═══════════════════════════════════════════════════════════════════════════════
+  - name: pages
+    label: 📄 Pages
+    type: collection
+    path: cms/pages
+    icon: file-text
+    fields:
+      - name: title
+        label: Page Title
+        type: string
+        required: true
+
+      - name: slug
+        label: URL Handle
+        type: string
+        required: true
+
+      - name: template
+        label: Page Template
+        type: select
+        options:
+          - Default
+          - Full Width
+          - Narrow
+          - Contact
+          - About
+          - FAQ
+
+      - name: content
+        label: Page Content
+        type: rich-text
+
+      - name: sections
+        label: Page Sections (like homepage)
+        type: list
+        fields:
+          - name: section_type
+            label: Section Type
+            type: select
+            options:
+              - Rich Text
+              - Image with Text
+              - Gallery
+              - Video
+              - Products
+              - Collection
+              - Newsletter
+              - Custom HTML
+
+      - name: seo
+        label: SEO Settings
+        type: object
+        fields:
+          - name: title
+            label: SEO Title
+            type: string
+          - name: description
+            label: Meta Description
+            type: text
+          - name: no_index
+            label: Hide from Search Engines
+            type: boolean
+
+      - name: visibility
+        label: Visibility
+        type: select
+        options:
+          - Published
+          - Draft
+          - Hidden
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 7. MARKETING TOOLS
+# ═══════════════════════════════════════════════════════════════════════════════
+  - name: discounts
+    label: 🏷️ Discounts
+    type: collection
+    path: cms/discounts
+    icon: percent
+    fields:
+      - name: code
+        label: Discount Code
+        type: string
+        required: true
+
+      - name: status
+        label: Status
+        type: select
+        options:
+          - Active
+          - Scheduled
+          - Expired
+          - Disabled
+
+      - name: type
+        label: Discount Type
+        type: select
+        options:
+          - Percentage Off
+          - Fixed Amount Off
+          - Buy X Get Y
+          - Free Shipping
+
+      - name: value
+        label: Discount Value
+        type: number
+
+      - name: applies_to
+        label: Applies To
+        type: select
+        options:
+          - Entire Order
+          - Specific Collections
+          - Specific Products
+
+      - name: minimum_requirements
+        label: Minimum Requirements
+        type: object
+        fields:
+          - name: requirement_type
+            label: Requirement
+            type: select
+            options:
+              - None
+              - Minimum Purchase Amount
+              - Minimum Quantity of Items
+          - name: value
+            label: Minimum Value
+            type: number
+
+      - name: usage_limits
+        label: Usage Limits
+        type: object
+        fields:
+          - name: limit_total
+            label: Limit Total Uses
+            type: number
+          - name: limit_per_customer
+            label: Limit Per Customer
+            type: number
+
+      - name: active_dates
+        label: Active Dates
+        type: object
+        fields:
+          - name: start_date
+            label: Start Date
+            type: datetime
+          - name: end_date
+            label: End Date
+            type: datetime
+
+  - name: emails
+    label: 📧 Email Templates
+    type: file
+    path: cms/emails.json
+    icon: mail
+    fields:
+      - name: order_confirmation
+        label: Order Confirmation Email
+        type: object
+        fields:
+          - name: subject
+            label: Subject Line
+            type: string
+          - name: body
+            label: Email Body
+            type: rich-text
+
+      - name: shipping_confirmation
+        label: Shipping Confirmation
+        type: object
+        fields:
+          - name: subject
+            label: Subject Line
+            type: string
+          - name: body
+            label: Email Body
+            type: rich-text
+
+      - name: abandoned_cart
+        label: Abandoned Cart Recovery
+        type: object
+        fields:
+          - name: enabled
+            label: Enable Automated Emails
+            type: boolean
+          - name: delay_hours
+            label: Send After (hours)
+            type: number
+          - name: subject
+            label: Subject Line
+            type: string
+          - name: body
+            label: Email Body
+            type: rich-text
+          - name: discount_code
+            label: Include Discount Code
+            type: string
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 8. SETTINGS & CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════════
+  - name: settings
+    label: ⚙️ Store Settings
+    type: file
+    path: cms/settings.json
+    icon: settings
+    fields:
+      - name: store_details
+        label: 🏪 Store Details
+        type: object
+        fields:
+          - name: store_name
+            label: Store Name
+            type: string
+          - name: store_email
+            label: Customer Service Email
+            type: string
+          - name: store_phone
+            label: Phone Number
+            type: string
+          - name: store_address
+            label: Business Address
+            type: text
+
+      - name: currency
+        label: 💱 Currency & Pricing
+        type: object
+        fields:
+          - name: currency_code
+            label: Currency
+            type: select
+            options:
+              - USD
+              - EUR
+              - GBP
+              - CAD
+              - AUD
+              - JPY
+          - name: currency_symbol
+            label: Currency Symbol
+            type: string
+          - name: show_currency_selector
+            label: Allow Currency Switching
+            type: boolean
+
+      - name: taxes
+        label: 🏛️ Taxes
+        type: object
+        fields:
+          - name: tax_included_in_prices
+            label: Prices Include Tax
+            type: boolean
+          - name: tax_rates
+            label: Tax Rates
+            type: list
+            fields:
+              - name: country
+                label: Country/Region
+                type: string
+              - name: rate
+                label: Tax Rate (%)
+                type: number
+
+      - name: shipping
+        label: 🚚 Shipping
+        type: object
+        fields:
+          - name: shipping_origin
+            label: Shipping From Address
+            type: text
+          - name: free_shipping_threshold
+            label: Free Shipping Minimum ($)
+            type: number
+          - name: shipping_zones
+            label: Shipping Zones & Rates
+            type: list
+            fields:
+              - name: zone_name
+                label: Zone Name
+                type: string
+              - name: countries
+                label: Countries
+                type: list
+                fields:
+                  - name: country
+                    label: Country
+                    type: string
+              - name: rates
+                label: Shipping Rates
+                type: list
+                fields:
+                  - name: rate_name
+                    label: Rate Name
+                    type: string
+                  - name: price
+                    label: Price
+                    type: number
+
+      - name: payments
+        label: 💳 Payment Gateways
+        type: object
+        fields:
+          - name: manual_payment
+            label: Cash on Delivery / Bank Transfer
+            type: boolean
+          - name: paypal_enabled
+            label: PayPal
+            type: boolean
+          - name: stripe_enabled
+            label: Credit Cards (Stripe)
+            type: boolean
+          - name: test_mode
+            label: Test Mode (Sandbox)
+            type: boolean
+
+      - name: legal
+        label: ⚖️ Legal Pages
+        type: object
+        fields:
+          - name: refund_policy
+            label: Refund Policy
+            type: rich-text
+          - name: privacy_policy
+            label: Privacy Policy
+            type: rich-text
+          - name: terms_of_service
+            label: Terms of Service
+            type: rich-text
+          - name: shipping_policy
+            label: Shipping Policy
+            type: rich-text
+
+      - name: integrations
+        label: 🔌 Integrations
+        type: object
+        fields:
+          - name: google_analytics
+            label: Google Analytics ID
+            type: string
+          - name: facebook_pixel
+            label: Facebook Pixel ID
+            type: string
+          - name: hotjar_id
+            label: Hotjar ID
+            type: string
