@@ -1,0 +1,54 @@
+{
+  "title": "Air Max Velocity",
+  "sku": "UE-SNK-001",
+  "status": "active",
+  "stock_status": "in_stock",
+  "stock_quantity": 10,
+  "price": 189,
+  "compare_at_price": 229,
+  "featured_image": "",
+  "media_gallery": [],
+  "categories": [
+    {
+      "category": "Sneakers"
+    }
+  ],
+  "collections": [
+    {
+      "collection": "Summer Heat"
+    }
+  ],
+  "tags": [
+    {
+      "tag": "new"
+    }
+  ],
+  "vendor": "URBAN EDGES",
+  "description": "<p>Premium sneakers for urban explorers.</p>",
+  "short_description": "Engineered for speed",
+  "variants": [],
+  "options": [],
+  "seo": {
+    "seo_title": "Air Max Velocity - URBAN EDGES",
+    "seo_description": "Premium sneakers for urban explorers",
+    "url_handle": "air-max-velocity"
+  },
+  "shipping": {
+    "physical_product": true,
+    "weight": 1.5,
+    "dimensions": {
+      "length": 30,
+      "width": 20,
+      "height": 10
+    },
+    "shipping_class": "Standard"
+  },
+  "featured": true,
+  "new_arrival": true,
+  "bestseller": false,
+  "visibility": {
+    "visible_on_store": true,
+    "visible_on_search": true,
+    "visible_on_collections": true
+  }
+}
