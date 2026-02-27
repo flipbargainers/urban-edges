@@ -1,21 +1,131 @@
 {
   "global_settings": {
     "site_title": "URBAN EDGES",
+    "favicon": "",
     "accent_color": "#c8ff00",
     "secondary_color": "#ff6b00",
     "background_dark": "#0a0a0a",
-    "background_card": "#1a1a1a"
+    "background_card": "#1a1a1a",
+    "text_primary": "#f5f5f5",
+    "text_muted": "#737373",
+    "font_heading": "Bebas Neue",
+    "font_body": "Inter"
   },
   "header": {
     "logo_type": "Text",
     "logo_text": "URBAN EDGES",
+    "logo_width": 200,
+    "header_layout": "Logo Left - Menu Center - Icons Right",
     "sticky_header": true,
-    "transparent_header": true
+    "transparent_header": true,
+    "announcement_bar": true,
+    "search_in_header": true,
+    "account_icon": true,
+    "cart_icon": true
   },
-  "homepage_sections": [],
+  "navigation_menus": {
+    "main_menu": [
+      {
+        "label": "Shop",
+        "url": "/products",
+        "type": "Page",
+        "mega_menu": false,
+        "highlight": false
+      },
+      {
+        "label": "Collections",
+        "url": "/collections",
+        "type": "Page",
+        "mega_menu": false,
+        "highlight": false
+      }
+    ],
+    "mobile_menu": []
+  },
+  "homepage_sections": [
+    {
+      "section_type": "Hero Banner",
+      "enabled": true,
+      "custom_id": "hero",
+      "hero_layout": "Full Screen",
+      "hero_height": "100vh (Full Screen)",
+      "hero_background_type": "Image",
+      "hero_overlay_opacity": 30,
+      "hero_text_alignment": "Left",
+      "hero_headline": "URBAN<br>EDGES",
+      "hero_subheadline": "Streetwear meets premium craftsmanship. Limited drops, timeless style.",
+      "hero_tagline": "NEW COLLECTION 2024",
+      "hero_primary_button": {
+        "text": "SHOP NOW",
+        "url": "/products",
+        "style": "Solid Accent"
+      },
+      "hero_secondary_button": {
+        "enabled": true,
+        "text": "EXPLORE",
+        "url": "#categories"
+      },
+      "hero_fanned_images": [],
+      "hero_scroll_indicator": true
+    }
+  ],
+  "product_pages": {
+    "show_vendor": true,
+    "show_sku": true,
+    "show_stock_status": true,
+    "show_share_buttons": true,
+    "image_zoom": true,
+    "image_layout": "Thumbnails Left",
+    "sticky_cart": true
+  },
+  "collection_pages": {
+    "default_sort": "Featured",
+    "products_per_page": 12,
+    "show_filters": true,
+    "enable_infinite_scroll": false
+  },
+  "cart_drawer": {
+    "cart_type": "Drawer (Slide from right)",
+    "show_cart_notes": true,
+    "show_shipping_calculator": true,
+    "enable_cart_recommendations": true
+  },
   "footer": {
+    "footer_logo": "",
+    "footer_text": "Premium streetwear and sneakers for the modern urbanite.",
+    "footer_columns": [
+      {
+        "title": "Shop",
+        "links": [
+          {
+            "label": "Sneakers",
+            "url": "/products/sneakers"
+          },
+          {
+            "label": "Apparel",
+            "url": "/products/apparel"
+          }
+        ]
+      }
+    ],
+    "newsletter": {
+      "enabled": true,
+      "heading": "JOIN THE MOVEMENT",
+      "text": "Subscribe for exclusive drops and discounts",
+      "button_text": "SUBSCRIBE",
+      "placeholder": "Enter your email"
+    },
     "show_newsletter": true,
     "show_social_links": true,
+    "social_links": {
+      "instagram": "",
+      "twitter": "",
+      "facebook": "",
+      "tiktok": "",
+      "youtube": "",
+      "pinterest": ""
+    },
+    "payment_icons": true,
     "copyright_text": "© 2024 URBAN EDGES. All rights reserved."
   }
 }
