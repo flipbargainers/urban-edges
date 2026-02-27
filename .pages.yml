@@ -3,18 +3,41 @@ media:
   output: images
 
 content:
+  # This creates a Hero Banner controller
+  - name: settings
+    label: Website Settings
+    type: dictionary
+    path: frontend/settings.json
+    fields:
+      - name: hero_title
+        label: Hero Main Title
+        type: string
+      - name: hero_subtitle
+        label: Hero Subtitle
+        type: string
+      - name: hero_image
+        label: Hero Background Image
+        type: image
+
+  # This creates your dynamic products with SIZES
   - name: products
-    label: My Products
+    label: Shop Inventory
     type: collection
     path: frontend/products
     format: json
     fields:
       - name: title
-        label: Name
+        label: Product Name
         type: string
       - name: price
-        label: Price
+        label: Price (e.g. $45)
+        type: string
+      - name: sizes
+        label: Available Sizes (comma separated)
+        type: string
+      - name: section
+        label: Section (Type 'New' or 'Sale' or 'Regular')
         type: string
       - name: image
-        label: Image
+        label: Product Image
         type: image
