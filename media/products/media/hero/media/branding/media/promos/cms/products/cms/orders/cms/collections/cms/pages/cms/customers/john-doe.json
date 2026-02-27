@@ -1,0 +1,17 @@
+{
+  "customer_id": "cust_001",
+  "email": "john@example.com",
+  "first_name": "John",
+  "last_name": "Doe",
+  "phone": "+1234567890",
+  "addresses": [],
+  "order_history": [
+    {
+      "order_id": "UE-2024-001"
+    }
+  ],
+  "total_spent": 199,
+  "orders_count": 1,
+  "tags": [],
+  "accepts_marketing": true
+}
