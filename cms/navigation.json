@@ -1,0 +1,24 @@
+{
+  "header": {
+    "logo_text": "URBAN EDGES",
+    "cta_button": {
+      "enabled": true,
+      "text": "Shop Now",
+      "url": "/products"
+    }
+  },
+  "footer": {
+    "tagline": "Premium streetwear and sneakers for the modern urbanite.",
+    "newsletter": {
+      "enabled": true,
+      "heading": "JOIN THE MOVEMENT",
+      "text": "Subscribe for exclusive drops and discounts",
+      "button_text": "SUBSCRIBE",
+      "placeholder": "Enter your email"
+    },
+    "bottom_bar": {
+      "copyright": "© 2024 URBAN EDGES. All rights reserved.",
+      "show_payment_icons": true
+    }
+  }
+}
