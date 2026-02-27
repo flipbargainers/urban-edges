@@ -1,1 +1,12 @@
-{}
+{
+  "store_details": {
+    "store_name": "URBAN EDGES",
+    "store_email": "hello@urbanedges.com",
+    "store_phone": "",
+    "store_address": ""
+  },
+  "currency": {
+    "currency_code": "USD",
+    "show_currency_selector": false
+  }
+}
