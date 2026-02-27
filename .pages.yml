@@ -1,0 +1,20 @@
+media:
+  input: frontend/images
+  output: images
+
+content:
+  - name: products
+    label: My Products
+    type: collection
+    path: frontend/products
+    format: json
+    fields:
+      - name: title
+        label: Name
+        type: string
+      - name: price
+        label: Price
+        type: string
+      - name: image
+        label: Image
+        type: image
