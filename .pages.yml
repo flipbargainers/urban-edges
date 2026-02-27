@@ -3,7 +3,6 @@ media:
   output: images
 
 content:
-  # This creates the "Website Settings" tab for your Hero Banner
   - name: settings
     label: Website Settings
     type: dictionary
@@ -19,7 +18,6 @@ content:
         label: Hero Background Image
         type: image
 
-  # This creates the "Shop Inventory" tab for your Products
   - name: products
     label: Shop Inventory
     type: collection
@@ -30,13 +28,13 @@ content:
         label: Product Name
         type: string
       - name: price
-        label: Price (e.g., $120)
+        label: Price
         type: string
       - name: sizes
-        label: Available Sizes (e.g., S, M, L, XL)
+        label: Sizes
         type: string
       - name: section
-        label: Section (Type 'New' for New Arrivals, or 'Regular' for Best Sellers)
+        label: Section (New or Regular)
         type: string
       - name: image
         label: Product Image
