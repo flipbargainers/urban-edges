@@ -1,34 +1,43 @@
-backend:
-  name: github
-  repo: YOUR-USERNAME/YOUR-REPO
+media:
+  input: frontend/images
+  output: images
 
-media_folder: "frontend/images"
-public_folder: "/images"
-
-collections:
-
-  # Website Settings (Hero Banner)
-  - name: "settings"
-    label: "Website Settings"
-    files:
-      - name: "settings"
-        label: "Hero Settings"
-        file: "frontend/settings.json"
-        fields:
-          - { name: "hero_title", label: "Hero Main Title", widget: "string" }
-          - { name: "hero_subtitle", label: "Hero Subtitle", widget: "string" }
-          - { name: "hero_image", label: "Hero Background Image", widget: "image" }
-
-  # Shop Inventory
-  - name: "products"
-    label: "Shop Inventory"
-    folder: "frontend/products"
-    create: true
-    format: "json"
-    slug: "{{slug}}"
+content:
+  # This creates a Hero Banner controller
+  - name: settings
+    label: Website Settings
+    type: dictionary
+    path: frontend/settings.json
     fields:
-      - { name: "title", label: "Product Name", widget: "string" }
-      - { name: "price", label: "Price (e.g. $45)", widget: "string" }
-      - { name: "sizes", label: "Available Sizes (comma separated)", widget: "string" }
-      - { name: "section", label: "Section (New, Sale, Regular)", widget: "string" }
-      - { name: "image", label: "Product Image", widget: "image" }
+      - name: hero_title
+        label: Hero Main Title
+        type: string
+      - name: hero_subtitle
+        label: Hero Subtitle
+        type: string
+      - name: hero_image
+        label: Hero Background Image
+        type: image
+
+  # This creates your dynamic products with SIZES
+  - name: products
+    label: Shop Inventory
+    type: collection
+    path: frontend/products
+    format: json
+    fields:
+      - name: title
+        label: Product Name
+        type: string
+      - name: price
+        label: Price (e.g. $45)
+        type: string
+      - name: sizes
+        label: Available Sizes (comma separated)
+        type: string
+      - name: section
+        label: Section (Type 'New' or 'Sale' or 'Regular')
+        type: string
+      - name: image
+        label: Product Image
+        type: image
