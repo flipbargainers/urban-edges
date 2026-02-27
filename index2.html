@@ -260,8 +260,9 @@
           <div class="space-y-6 z-10 text-center lg:text-left order-2 lg:order-1">
             <div class="space-y-4">
               <p class="text-[var(--accent)] font-medium tracking-widest text-sm stagger-item" style="animation-delay: 0.1s">NEW COLLECTION 2024</p>
-              <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl leading-none tracking-tight stagger-item" style="animation-delay: 0.2s">URBAN<br>EDGES</h1>
-              <p class="text-[var(--muted)] text-base lg:text-lg max-w-md mx-auto lg:mx-0 stagger-item" style="animation-delay: 0.3s">Streetwear meets premium craftsmanship. Limited drops, timeless style. Built for those who move differently.</p>
+              <!-- CHANGE 1: Added IDs to Hero Tags -->
+              <h1 id="hero-title" class="font-display text-5xl sm:text-6xl lg:text-7xl leading-none tracking-tight stagger-item" style="animation-delay: 0.2s">URBAN<br>EDGES</h1>
+              <p id="hero-subtitle" class="text-[var(--muted)] text-base lg:text-lg max-w-md mx-auto lg:mx-0 stagger-item" style="animation-delay: 0.3s">Streetwear meets premium craftsmanship. Limited drops, timeless style. Built for those who move differently.</p>
             </div>
 
             <div class="flex flex-wrap gap-4 justify-center lg:justify-start stagger-item" style="animation-delay: 0.4s">
@@ -334,6 +335,7 @@
             <h2 class="font-display text-3xl lg:text-4xl">NEW ARRIVALS</h2>
           </div>
         </div>
+        <!-- CHANGE 2: Ensured Grid is Empty -->
         <div id="new-arrivals" class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6"></div>
       </div>
     </section>
@@ -512,6 +514,7 @@
             </div>
           </aside>
           <div class="flex-1">
+            <!-- CHANGE 2: Ensured Grid is Empty -->
             <div id="product-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6"></div>
           </div>
         </div>
@@ -1294,46 +1297,49 @@
         closeAccountModal();
       }
     });
-  </script>
-  <script>
-  async function loadCMSProducts() {
-    try {
-      // 1. Fetch the list of product files from your GitHub folder
-      const response = await fetch('https://api.github.com/repos/flipbargainers/urban-edges/contents/frontend/products');
-      const files = await response.json();
-      
-      // 2. Find the places on your page to put the products
-      const newArrivals = document.getElementById('new-arrivals');
-      const productGrid = document.getElementById('product-grid');
 
-      for (let file of files) {
-        if (file.name.endsWith('.json')) {
-          const productData = await fetch(file.download_url).then(res => res.json());
-          
-          // 3. This matches the exact style of your website
-          const productHTML = `
-            <div class="product-card reveal visible">
-              <div class="product-image-wrapper aspect-[3/4] mb-4">
-                <img src="${productData.image}" alt="${productData.title}" class="product-image w-full h-full object-cover">
-              </div>
-              <h3 class="font-medium text-sm text-white">${productData.title}</h3>
-              <p class="text-[var(--accent)] font-bold mt-1">${productData.price}</p>
-            </div>
-          `;
+    // CHANGE 3: CMS Sync Logic
+    const GITHUB_REPO = "flipbargainers/urban-edges";
 
-          // 4. Add the product to both your "New Arrivals" and "Shop All" sections
-          if (newArrivals) newArrivals.innerHTML += productHTML;
-          if (productGrid) productGrid.innerHTML += productHTML;
+    async function syncWithCMS() {
+      try {
+        // 1. Sync Banner Settings
+        const settingsRes = await fetch(`https://raw.githubusercontent.com/${GITHUB_REPO}/main/frontend/settings.json`);
+        if (settingsRes.ok) {
+          const settings = await settingsRes.json();
+          if(settings.hero_title) document.getElementById('hero-title').innerHTML = settings.hero_title.replace(" ", "<br>");
+          if(settings.hero_subtitle) document.getElementById('hero-subtitle').innerText = settings.hero_subtitle;
         }
-      }
-    } catch (error) {
-      console.log("No products found yet or error loading.");
+
+        // 2. Fetch and Display Products
+        const productsRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/frontend/products`);
+        const files = await productsRes.json();
+
+        for (let file of files) {
+          if (file.name.endsWith('.json')) {
+            const data = await fetch(file.download_url).then(res => res.json());
+            
+            const cardHTML = `
+              <div class="product-card reveal visible">
+                <div class="product-image-wrapper aspect-[3/4] bg-[var(--card)] mb-4">
+                  <img src="${data.image}" alt="${data.title}" class="product-image w-full h-full object-cover">
+                </div>
+                <h3 class="font-medium text-sm text-white">${data.title}</h3>
+                <p class="text-[var(--accent)] font-bold mt-1">${data.price}</p>
+              </div>
+            `;
+
+            if (data.section === "New") {
+              document.getElementById('new-arrivals').innerHTML += cardHTML;
+            } else {
+              document.getElementById('product-grid').innerHTML += cardHTML;
+            }
+          }
+        }
+      } catch (e) { console.log("CMS Sync Error:", e); }
     }
-  }
 
-  // Run this when the page loads
-  window.addEventListener('load', loadCMSProducts);
-</script>
+    window.addEventListener('DOMContentLoaded', syncWithCMS);
+  </script>
 </body>
-
 </html>
