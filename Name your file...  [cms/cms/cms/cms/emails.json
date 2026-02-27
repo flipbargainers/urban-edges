@@ -1,1 +1,17 @@
-{}
+{
+  "order_confirmation": {
+    "subject": "Your order is confirmed!",
+    "body": "Thank you for your order."
+  },
+  "shipping_confirmation": {
+    "subject": "Your order has shipped!",
+    "body": "Your order is on its way."
+  },
+  "abandoned_cart": {
+    "enabled": false,
+    "delay_hours": 24,
+    "subject": "You left something behind",
+    "body": "Complete your purchase.",
+    "discount_code": ""
+  }
+}
